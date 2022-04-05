@@ -10,6 +10,19 @@
     <link rel="preload" href="./fonts/Montserrat-SemiBold.woff2" as="font" crossorigin="anonymous" />
     <link rel="preload" href="./fonts/Montserrat-Bold.woff2" as="font" crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <!-- <script async src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script> -->    
+    <script src="/js/2gisfull.js"></script>
+    <script id="map2gis" type="text/javascript">
+      let map;      
+      DG.then(function () {
+          map = DG.map("map", {
+              center: [59.848325, 30.256839],
+              zoom: 11
+          });
+          // DG.marker([59.848325, 30.256839]).addTo(map);    
+      });
+    </script>
   </head>
   <body>
     <div class="page-header"></div>
@@ -39,23 +52,23 @@
           <div class="tabs-block__content">
             <section class="form tabs-block__pick-up">
               <h2 class="visually-hidden">Форма самовывоза</h2>
-              <form action="#" method="POST">
+              <form id="pickupForm" action="#" method="POST">
                 <h3>Самовывоз</h3>
                 <div class="input-wrapper input-wrapper--radio-group">
                   <h4>Город</h4>
-                  <input id="pick-up-led" type="radio" name="city" value="lED" checked />
+                  <input id="pick-up-led" class="pickup-city-name" type="radio" name="city" value="led" checked />
                   <label for="pick-up-led">Санкт-Петербург</label>
-                  <input id="pick-up-mow" type="radio" name="city" value="mow" />
+                  <input id="pick-up-mow" class="pickup-city-name" type="radio" name="city" value="mow" />
                   <label for="pick-up-mow">Москва</label>
-                  <input id="pick-up-goj" type="radio" name="city" value="goj" />
+                  <input id="pick-up-goj" class="pickup-city-name" type="radio" name="city" value="goj" />
                   <label for="pick-up-goj">Нижний Новгород</label>
-                  <input id="pick-up-krr" type="radio" name="city" value="krr" />
+                  <input id="pick-up-krr" class="pickup-city-name" type="radio" name="city" value="krr" />
                   <label for="pick-up-krr">Краснодар</label>
                 </div>
-                <div class="input-wrapper input-wrapper--radio-group">
-                  <h4>Адрес пункта выдачи заказов</h4>
-                  <input id="pick-up-led-address-1" type="radio" name="led-address" value="Ленина, 10" checked />
-                  <label for="pick-up-led-address-1">Ленина, 10</label>
+                <div id="pickupAdresses" class="input-wrapper input-wrapper--radio-group">
+                  <!-- <h4>Адрес пункта выдачи заказов</h4>
+                  <input id="pick-up-led-address-1" type="radio" name="led-address" value="Ленина, 10" checked/>
+                  <label for="pick-up-led-address-1" >Ленина, 10</label>
                   <input id="pick-up-led-address-2" type="radio" name="led-address" value="Сталина, 20" />
                   <label for="pick-up-led-address-2">Сталина, 20</label>
                   <input id="pick-up-led-address-3" type="radio" name="led-address" value="Хрущёва, 30" />
@@ -63,9 +76,10 @@
                   <input id="pick-up-led-address-4" type="radio" name="led-address" value="Брежнева, 40" />
                   <label for="pick-up-led-address-4">Брежнева, 40</label>
                   <input id="pick-up-led-address-5" type="radio" name="led-address" value="Андропова, 50" />
-                  <label for="pick-up-led-address-5">Андропова, 50</label>
+                  <label for="pick-up-led-address-5">Андропова, 50</label> -->
                 </div>
-                <div class="map"></div>
+                <!-- <div id="map" class="map"></div> -->
+                <div id="map" style="width: 768px; height:400px"></div>
                 <h3>Способ оплаты</h3>
                 <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
                   <input id="payment-card" type="radio" name="payment-method" value="card" checked />
@@ -105,8 +119,8 @@
               </form>
             </section>
             <section class="form tabs-block__item-delivery">
-              <h2 class="visually-hidden">Форма самовывоза</h2>
-              <form action="#" method="POST">
+              <h2 class="visually-hidden">Форма доставки</h2>
+              <form id="deliveryForm" action="#" method="POST">
                 <h3>Доставка</h3>
                 <div class="input-wrapper input-wrapper--radio-group">
                   <h4>Город</h4>
