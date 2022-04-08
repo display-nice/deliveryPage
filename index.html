@@ -77,25 +77,24 @@
                   <label for="pick-up-led-address-4">Брежнева, 40</label>
                   <input id="pick-up-led-address-5" type="radio" name="led-address" value="Андропова, 50" />
                   <label for="pick-up-led-address-5">Андропова, 50</label> -->
-                </div>
-                <!-- <div id="map" class="map"></div> -->
+                </div>                
                 <div id="map" style="width: 768px; height:400px"></div>
                 <h3>Способ оплаты</h3>
                 <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
-                  <input id="payment-card" type="radio" name="payment-method" value="card" checked />
-                  <label for="payment-card">Карта</label>
-                  <input id="payment-cash" type="radio" name="payment-method" value="cash" />
-                  <label for="payment-cash">Наличные</label>
+                  <input id="pickup-payment-card" type="radio" name="payment-method" value="card" checked />
+                  <label for="pickup-payment-card">Карта</label>
+                  <input id="pickup-payment-cash" type="radio" name="payment-method" value="cash" />
+                  <label for="pickup-payment-cash">Наличные</label>
                 </div>
-                <div class="input-wrapper input-wrapper--error input-wrapper--input-group">
+                <div id="pickup-input-card-number" class="input-wrapper input-wrapper--input-group">
                   <h4>Номер карты</h4>
-                  <input id="card-fields-1" type="text" required />
+                  <input id="card-fields-1" type="text" maxlength="4" required />
                   <label for="card-fields-1" aria-label="Первые четыре цифр с карты"></label>
-                  <input id="card-fields-2" type="text" required />
+                  <input id="card-fields-2" type="text" maxlength="4" required />
                   <label for="card-fields-2" aria-label="Вторые четыре цифр с карты"></label>
-                  <input id="card-fields-3" type="text" required />
+                  <input id="card-fields-3" type="text" maxlength="4" required />
                   <label for="card-fields-3" aria-label="Третьи четыре цифр с карты"></label>
-                  <input id="card-fields-4" type="text" required />
+                  <input id="card-fields-4" type="text" maxlength="4" required />
                   <label for="card-fields-4" aria-label="Четвёртые четыре цифр с карты"></label>
                   <div class="input-wrapper__error">Введите верный номер карты</div>
                 </div>
@@ -170,12 +169,12 @@
                 </div>
                 <h3>Способ оплаты</h3>
                 <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
-                  <input id="payment-card" type="radio" name="payment-method" value="card" />
-                  <label for="payment-card">Карта</label>
-                  <input id="payment-cash" type="radio" name="payment-method" value="cash" checked />
-                  <label for="payment-cash">Наличные</label>
+                  <input id="delivery-payment-card" type="radio" name="delivery-payment-method" value="card" checked/>
+                  <label for="delivery-payment-card">Карта</label>
+                  <input id="delivery-payment-cash" type="radio" name="delivery-payment-method" value="cash"  />
+                  <label for="delivery-payment-cash">Наличные</label>
                 </div>
-                <div class="input-wrapper input-wrapper--hidden input-wrapper--input-group">
+                <div id="delivery-input-card-number" class="input-wrapper input-wrapper--hidden input-wrapper--input-group">
                   <h4>Номер карты</h4>
                   <input id="delivery-user-card-1-4" type="text" required />
                   <label for="delivery-user-card-1-4" aria-label="Первые четыре цифр с карты"></label>
