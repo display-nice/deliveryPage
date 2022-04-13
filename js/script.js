@@ -1,3 +1,8 @@
+// глобальные переменные
+
+const phoneFields = document.querySelectorAll('#phone');
+
+
 //---------------------------Выбор между самовывозом и доставкой-----------------------------
 ( function(){
     let deliveryType = document.querySelector('.tab');
@@ -5,16 +10,25 @@
     let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 
     function transferInputValues() {
-        
+        phoneFields.forEach(field => {
+            field.value = localStorage.getItem('phone');
+        });
+
+    }
+
+    function transferCardNumber() {
+
     }
 
     function showPickupFunctional() {
+        transferInputValues();
         deliveryButton.classList.remove('active');
         pickupButton.classList.add('active');
         document.querySelector('.tabs-block__pick-up').hidden = false;
         document.querySelector('.tabs-block__item-delivery').hidden = true;
     }
     function showDeliveryFunctional() {
+        transferInputValues()
         pickupButton.classList.remove('active');
         deliveryButton.classList.add('active');
         document.querySelector('.tabs-block__item-delivery').hidden = false;
@@ -168,6 +182,7 @@ let cardFields = document.querySelectorAll('#pickup-input-card-number input');
 let cardNumberDiv = document.querySelector('#pickup-input-card-number');
 
 
+
 function goToNextField(currentField) {
     let k = +currentField.slice(12);
     let i = +currentField.slice(12) + 1;
@@ -188,21 +203,20 @@ function goToPrevField(currentField) {
     }
 }
 
-cardFields.forEach(field => {
+
+
+// for (let i = 1; i < 5; ++i) {
+    
+// }
+
+cardFields.forEach(function(field, i) {
     field.addEventListener('input', (e) => {
+        localStorage.setItem(`card${i+1}`, field.value);
+
         if (e.target.value.length == 4) {
             goToNextField(e.target.id);    
         }
-    });
-    
-    field.addEventListener('keydown', (e) => {
-        if (e.code == 'Backspace') {
-            if (e.target.value.length == 0) {
-                goToPrevField(e.target.id);
-            }
-        }
-    });
-    field.addEventListener('input', (e) => {
+
         if (cardField1.value.length == 4 && cardField2.value.length == 4 && cardField3.value.length == 4 && cardField4.value.length == 4) {
             let cardNumber = '';
             cardFields.forEach(field => {
@@ -220,6 +234,17 @@ cardFields.forEach(field => {
             }
             if (cardNumberDiv.classList.contains("input-wrapper--success")) {
                 cardNumberDiv.classList.remove("input-wrapper--success");
+            }
+        }
+    });
+});
+// field.addEventListener('input', (e) => {
+// });
+cardFields.forEach(field => {    
+    field.addEventListener('keydown', (e) => {
+        if (e.code == 'Backspace') {
+            if (e.target.value.length == 0) {
+                goToPrevField(e.target.id);
             }
         }
     });
@@ -262,14 +287,15 @@ function validateCreditCard(value) {
 
 // --------------------------------- Номера телефонов ------------------------------------------
 const phoneForms = document.querySelectorAll('#phone-form');
-const phoneFields = document.querySelectorAll('#phone');
-// let pt = document.querySelector('#phone1');
 
 phoneFields.forEach(field => {
     field.addEventListener('input', (e) => {
         if (field.value == "") {
             field.value = "+7";
         }
+
+        localStorage.setItem('phone', e.target.value); // сохраняем инпут в лок. хранилище
+
         if (field.value.length >= 12) {
             if (validatePhone(e.target.value)) {
                 phoneForms.forEach(form => {
