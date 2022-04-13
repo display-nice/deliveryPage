@@ -80,14 +80,12 @@ const phoneFields = document.querySelectorAll('#phone');
 }() );
 
 //---------------------------Номер банковской карты ----------------------------------------------
-let cardField1 = document.querySelector('#card-fields-1');
-let cardField2 = document.querySelector('#card-fields-2');
-let cardField3 = document.querySelector('#card-fields-3');
-let cardField4 = document.querySelector('#card-fields-4');
+// let cardField1 = document.querySelector('#card-fields-1');
+// let cardField2 = document.querySelector('#card-fields-2');
+// let cardField3 = document.querySelector('#card-fields-3');
+// let cardField4 = document.querySelector('#card-fields-4');
 let cardFields = document.querySelectorAll('#pickup-input-card-number input');
 let cardNumberDiv = document.querySelector('#pickup-input-card-number');
-
-
 
 function goToNextField(currentField) {
     let k = +currentField.slice(12);
@@ -109,46 +107,29 @@ function goToPrevField(currentField) {
     }
 }
 
+let cardNumberGlobal = getCardNumber();
+validateCardNumber(cardNumberGlobal);
+// console.log(`Первичный запуск. Длина cardNumber ${cardNumberGlobal.length}`);
 
-
-// for (let i = 1; i < 5; ++i) {
     
-    // }
-    
-    cardFields.forEach(function(field, i) {
-        field.addEventListener('input', (e) => {
-            localStorage.setItem(`card${i+1}`, field.value);
+cardFields.forEach(function(field, i) {
+    field.addEventListener('input', (e) => {
+        localStorage.setItem(`card${i+1}`, field.value); // кладём в локхран значение каждого поля
 
-            if (e.target.value.length == 4) {
+        if (e.target.value.length == 4) {
             goToNextField(e.target.id);    
         }
-
-        if (cardField1.value.length == 4 && cardField2.value.length == 4 && cardField3.value.length == 4 && cardField4.value.length == 4) {
-            let cardNumber = '';
-            cardFields.forEach(field => {
-                cardNumber += field.value; 
-            });
-            if (!validateCreditCard(cardNumber)){
-                cardNumberDiv.classList.add("input-wrapper--error");
-            }
-            if (validateCreditCard(cardNumber)) {
-                cardNumberDiv.classList.add("input-wrapper--success");
-            }
-        } else {
-            if (cardNumberDiv.classList.contains("input-wrapper--error")) {
-                cardNumberDiv.classList.remove("input-wrapper--error");
-            }
-            if (cardNumberDiv.classList.contains("input-wrapper--success")) {
-                cardNumberDiv.classList.remove("input-wrapper--success");
-            }
-        }
+    
+        let cardNumber = getCardNumber();
+        // console.log(`длина cardNumber ${cardNumber.length}`);
+        validateCardNumber(cardNumber);
     });
 });
-// field.addEventListener('input', (e) => {
-    // });
-    cardFields.forEach(field => {    
-        field.addEventListener('keydown', (e) => {
-            if (e.code == 'Backspace') {
+
+
+cardFields.forEach(field => {    
+    field.addEventListener('keydown', (e) => {
+        if (e.code == 'Backspace') {
             if (e.target.value.length == 0) {
                 goToPrevField(e.target.id);
             }
@@ -156,13 +137,37 @@ function goToPrevField(currentField) {
     });
 });
 
-let imei1 = '5536913754881494';
-let imei2 = '1111111111111111';
-// let imei3 = [5, 5, 3, 6, 9, 1, 3, 7, 5, 4, 8, 8, 1, 4, 9, 4];
-// let imei4 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+function getCardNumber() {
+    let cardNumber = '';
+    cardFields.forEach(field => {
+        cardNumber += field.value; 
+    });
+    return cardNumber;
+}
+
+function validateCardNumber(cardNumber) {
+    if (cardNumber.length < 16) {
+        cardNumberDiv.classList.add("input-wrapper--error");
+    } else {
+        if (!luhnAlgorythm(cardNumber)){
+            // console.log(`Номер не валиден.`);
+            
+            cardNumberDiv.classList.remove("input-wrapper--success");
+            cardNumberDiv.classList.add("input-wrapper--error");
+        }
+        if (luhnAlgorythm(cardNumber)) {
+            // console.log(`Проверка пройдена`);
+            
+            cardNumberDiv.classList.remove("input-wrapper--error");
+            cardNumberDiv.classList.add("input-wrapper--success");
+            
+        } 
+    }
+}
 
 // takes the form field value and returns true on valid number
-function validateCreditCard(value) {
+function luhnAlgorythm(value) {
     if (!value) {
         return false;
     }
