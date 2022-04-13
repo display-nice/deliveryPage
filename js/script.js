@@ -4,6 +4,10 @@
     let pickupButton = document.querySelector('.tab[data-tab="pickup"]');
     let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 
+    function transferInputValues() {
+        
+    }
+
     function showPickupFunctional() {
         deliveryButton.classList.remove('active');
         pickupButton.classList.add('active');
@@ -220,9 +224,6 @@ cardFields.forEach(field => {
         }
     });
 });
-// let cardNumber = '';
-// let someNumber = 5536;
-// console.log(typeof(cardNumber+someNumber));
 
 let imei1 = '5536913754881494';
 let imei2 = '1111111111111111';
@@ -235,18 +236,22 @@ function validateCreditCard(value) {
         return false;
     }
     // accept only digits, dashes or spaces
-        if (/[^0-9-\s]+/.test(value)) return false;
+        if (/[^0-9-\s]+/.test(value)) {
+            return false;
+        }
     
     // The Luhn Algorithm. It so pretty.
     var nCheck = 0, nDigit = 0, bEven = false;
     value = value.replace(/\D/g, "");
 
     for (var n = value.length - 1; n >= 0; n--) {
-        var cDigit = value.charAt(n),
+        var cDigit = value.charAt(n);        
             nDigit = parseInt(cDigit, 10);
 
         if (bEven) {
-            if ((nDigit *= 2) > 9) nDigit -= 9;
+            if ((nDigit *= 2) > 9) {
+                nDigit -= 9;
+            }
         }
 
         nCheck += nDigit;
@@ -255,7 +260,44 @@ function validateCreditCard(value) {
     return (nCheck % 10) == 0;
 }
 
+// --------------------------------- Номера телефонов ------------------------------------------
+const phoneForms = document.querySelectorAll('#phone-form');
+const phoneFields = document.querySelectorAll('#phone');
+// let pt = document.querySelector('#phone1');
 
-// console.log(`Вывод первой формулы: ${luhnValidate(imei4)}`);
-// console.log(`Вывод второй формулы: ${validateCreditCard(imei1)}`);
+phoneFields.forEach(field => {
+    field.addEventListener('input', (e) => {
+        if (field.value == "") {
+            field.value = "+7";
+        }
+        if (field.value.length >= 12) {
+            if (validatePhone(e.target.value)) {
+                phoneForms.forEach(form => {
+                    form.classList.remove("input-wrapper--error");
+                    form.classList.add("input-wrapper--success");
+                });
+            } else {
+                phoneForms.forEach(form => {
+                form.classList.remove("input-wrapper--success");
+                form.classList.add("input-wrapper--error");
+                });
+            }
+        } else {
+            phoneForms.forEach(form => {
+                form.classList.remove("input-wrapper--success");
+            });
+        }
+    });    
+});
+
+function validatePhone(value) {
+    let result = value.match(/\+\d{11}\b/);
+    if (result) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 
