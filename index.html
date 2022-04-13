@@ -121,7 +121,7 @@
               <h2 class="visually-hidden">Форма доставки</h2>
               <form id="deliveryForm" action="#" method="POST">
                 <h3>Доставка</h3>
-                <div class="input-wrapper input-wrapper--radio-group">
+                <div class="input-wrapper input-wrapper--radio-group" style="display: none;">
                   <h4>Город</h4>
                   <input id="delivery-led" type="radio" name="city" value="lED" checked />
                   <label for="delivery-led">Санкт-Петербург</label>
@@ -132,19 +132,19 @@
                   <input id="delivery-krr" type="radio" name="city" value="krr" />
                   <label for="delivery-krr">Краснодар</label>
                 </div>
-                <div class="input-wrapper input-wrapper--error input-wrapper--input">
+                <div class="input-wrapper input-wrapper--error input-wrapper--input" style="display: none;">
                   <h4>Адрес</h4>
                   <input id="delivery-address" type="text" required />
                   <label for="delivery-address" aria-label="Укажите адрес"></label>
                   <div class="input-wrapper__error">Укажите адрес</div>
                 </div>
-                <div class="input-wrapper input-wrapper--success input-wrapper--input">
+                <div class="input-wrapper input-wrapper--success input-wrapper--input" style="display: none;">
                   <h4>Дата доставки</h4>
                   <input id="delivery-user-date-delivery" type="text" required />
                   <label for="delivery-user-date-delivery" aria-label="Укажите дату доставки"></label>
                   <div class="input-wrapper__error">Укажите дату доставки</div>
                 </div>
-                <div class="input-wrapper input-wrapper--range">
+                <div class="input-wrapper input-wrapper--range" style="display: none;">
                   <h4>Время доставки</h4>
                   <input id="delivery-user-time-delivery" type="range" class="hidden" data-field-type="delivery" />
                   <label for="delivery-user-time-delivery" aria-label="Укажите время доставки"></label>
@@ -174,7 +174,7 @@
                   <input id="delivery-payment-cash" type="radio" name="delivery-payment-method" value="cash"  />
                   <label for="delivery-payment-cash">Наличные</label>
                 </div>
-                <div id="delivery-input-card-number" class="input-wrapper input-wrapper--hidden input-wrapper--input-group">
+                <div id="delivery-input-card-number" class="input-wrapper input-wrapper--input-group">
                   <h4>Номер карты</h4>
                   <input id="delivery-user-card-1-4" type="text" required />
                   <label for="delivery-user-card-1-4" aria-label="Первые четыре цифр с карты"></label>
