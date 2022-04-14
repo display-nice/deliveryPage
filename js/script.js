@@ -2,41 +2,51 @@
 
 const phoneFields = document.querySelectorAll('#phone');
 
+let cardNumberGlobal;
+let cardFields;
+let cardNumberDiv;
+
 
 //---------------------------Выбор между самовывозом и доставкой-----------------------------
-( function(){
-    let deliveryType = document.querySelector('.tab');
+( function() {    
     let pickupButton = document.querySelector('.tab[data-tab="pickup"]');
     let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 
-    function transferInputValues() {
+    function transferPhoneValues() {
         phoneFields.forEach(field => {
             field.value = localStorage.getItem('phone');
         });
-
-    }
-
-    function transferCardNumber() {
-
     }
 
     function showPickupFunctional() {
-        transferInputValues();
+        cardFields = document.querySelectorAll('#pickup-input-card-number input');
+        cardNumberDiv = document.querySelector('#pickup-input-card-number');
         deliveryButton.classList.remove('active');
         pickupButton.classList.add('active');
         document.querySelector('.tabs-block__pick-up').hidden = false;
         document.querySelector('.tabs-block__item-delivery').hidden = true;
+        
+        transferPhoneValues();
+        activateCardFields();
+        cardNumberGlobal = getCardNumber();
+        validateCardNumber(cardNumberGlobal);
     }
     function showDeliveryFunctional() {
-        transferInputValues()
+        cardFields = document.querySelectorAll('#delivery-input-card-number input');
+        cardNumberDiv = document.querySelector('#delivery-input-card-number');
         pickupButton.classList.remove('active');
         deliveryButton.classList.add('active');
         document.querySelector('.tabs-block__item-delivery').hidden = false;
         document.querySelector('.tabs-block__pick-up').hidden = true;
+        
+        transferPhoneValues();
+        activateCardFields();
+        cardNumberGlobal = getCardNumber();
+        validateCardNumber(cardNumberGlobal);
     }
-    // showPickupFunctional(); // функционал самовывоза включён по-умолчанию
-    // pickupButton.onclick = showPickupFunctional; // вкл. функционал самовывоза
-    // deliveryButton.onclick = showDeliveryFunctional; // вкл. функционал доставки
+    showPickupFunctional(); // функционал самовывоза включён по-умолчанию
+    pickupButton.onclick = showPickupFunctional; // вкл. функционал самовывоза
+    deliveryButton.onclick = showDeliveryFunctional; // вкл. функционал доставки
 }() ); // самовызывающаяся анонимная ф-я
 
 
@@ -84,9 +94,48 @@ const phoneFields = document.querySelectorAll('#phone');
 // let cardField2 = document.querySelector('#card-fields-2');
 // let cardField3 = document.querySelector('#card-fields-3');
 // let cardField4 = document.querySelector('#card-fields-4');
-let cardFields = document.querySelectorAll('#pickup-input-card-number input');
-let cardNumberDiv = document.querySelector('#pickup-input-card-number');
+// let cardFields = document.querySelectorAll('#pickup-input-card-number input');
+// let cardNumberDiv = document.querySelector('#pickup-input-card-number');
+// cardFields = document.querySelectorAll('#delivery-input-card-number input');
+// cardNumberDiv = document.querySelector('#delivery-input-card-number');
 
+
+// activateCardFields();
+
+// cardNumberGlobal = getCardNumber();
+// validateCardNumber(cardNumberGlobal);
+
+// console.log(`Первичный запуск. Длина cardNumber ${cardNumberGlobal.length}`);
+
+// главный узел обработки номера карты, запускает всё
+
+function activateCardFields() {
+    cardFields.forEach(function(field, i) {
+        field.addEventListener('input', (e) => {
+            localStorage.setItem(`card${i+1}`, field.value); // кладём в локхран значение каждого поля
+    
+            if (e.target.value.length == 4) {
+                goToNextField(e.target.id);    
+            }
+        
+            let cardNumber = getCardNumber();            
+            validateCardNumber(cardNumber);
+        });
+    });
+    
+    // функционал бэкспейса на карточном номере
+    cardFields.forEach(field => {    
+        field.addEventListener('keydown', (e) => {
+            if (e.code == 'Backspace') {            
+                if (e.target.value.length == 0) {
+                    goToPrevField(e.target.id);
+                }
+            }
+        });
+    });
+}
+
+// получает следующее поле и ставит на нём фокус
 function goToNextField(currentField) {
     let k = +currentField.slice(12);
     let i = +currentField.slice(12) + 1;
@@ -96,6 +145,8 @@ function goToNextField(currentField) {
         nextField.focus();
     }
 }
+
+// получает предыдущее поле и ставит на нём фокус
 function goToPrevField(currentField) {
     let k = +currentField.slice(12);
     let i = +currentField.slice(12) - 1;
@@ -107,37 +158,7 @@ function goToPrevField(currentField) {
     }
 }
 
-let cardNumberGlobal = getCardNumber();
-validateCardNumber(cardNumberGlobal);
-// console.log(`Первичный запуск. Длина cardNumber ${cardNumberGlobal.length}`);
-
-    
-cardFields.forEach(function(field, i) {
-    field.addEventListener('input', (e) => {
-        localStorage.setItem(`card${i+1}`, field.value); // кладём в локхран значение каждого поля
-
-        if (e.target.value.length == 4) {
-            goToNextField(e.target.id);    
-        }
-    
-        let cardNumber = getCardNumber();
-        // console.log(`длина cardNumber ${cardNumber.length}`);
-        validateCardNumber(cardNumber);
-    });
-});
-
-
-cardFields.forEach(field => {    
-    field.addEventListener('keydown', (e) => {
-        if (e.code == 'Backspace') {
-            if (e.target.value.length == 0) {
-                goToPrevField(e.target.id);
-            }
-        }
-    });
-});
-
-
+// собирает из четырёх полей карты один номер карты в виде строки
 function getCardNumber() {
     let cardNumber = '';
     cardFields.forEach(field => {
@@ -146,6 +167,7 @@ function getCardNumber() {
     return cardNumber;
 }
 
+//проверка номера карты, внутри запускает функцию с алгоритмом Луна
 function validateCardNumber(cardNumber) {
     if (cardNumber.length < 16) {
         cardNumberDiv.classList.add("input-wrapper--error");
@@ -166,7 +188,7 @@ function validateCardNumber(cardNumber) {
     }
 }
 
-// takes the form field value and returns true on valid number
+// алгоритм Луна, возвращает true\false
 function luhnAlgorythm(value) {
     if (!value) {
         return false;
