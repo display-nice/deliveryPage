@@ -12,11 +12,27 @@ let cardNumberDiv;
     let pickupButton = document.querySelector('.tab[data-tab="pickup"]');
     let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 
+    //трансфер номера телефона сделан не прямой, а через localStorage просто потому, что так захотелось.
     function transferPhoneValues() {
         phoneFields.forEach(field => {
             field.value = localStorage.getItem('phone');
         });
     }
+
+    //прямой трансфер номера карты из доставки в самовывоз
+    function transferCardNumberToDelivery() {
+        document.querySelector('#deliver-crd-1').value = document.querySelector('#card-fields-1').value;
+        document.querySelector('#deliver-crd-2').value = document.querySelector('#card-fields-2').value;
+        document.querySelector('#deliver-crd-3').value = document.querySelector('#card-fields-3').value;
+        document.querySelector('#deliver-crd-4').value = document.querySelector('#card-fields-4').value;
+    }
+    //прямой трансфер номера карты из самовывоза в доставку
+    function transferCardNumberToPickup() {
+        document.querySelector('#card-fields-1').value = document.querySelector('#deliver-crd-1').value;
+        document.querySelector('#card-fields-2').value = document.querySelector('#deliver-crd-2').value;
+        document.querySelector('#card-fields-3').value = document.querySelector('#deliver-crd-3').value;
+        document.querySelector('#card-fields-4').value = document.querySelector('#deliver-crd-4').value;
+    }    
 
     function showPickupFunctional() {
         cardFields = document.querySelectorAll('#pickup-input-card-number input');
@@ -27,6 +43,7 @@ let cardNumberDiv;
         document.querySelector('.tabs-block__item-delivery').hidden = true;
         
         transferPhoneValues();
+        transferCardNumberToPickup();
         activateCardFields();
         cardNumberGlobal = getCardNumber();
         validateCardNumber(cardNumberGlobal);
@@ -40,9 +57,12 @@ let cardNumberDiv;
         document.querySelector('.tabs-block__pick-up').hidden = true;
         
         transferPhoneValues();
+        transferCardNumberToDelivery();
         activateCardFields();
+        // storedCardNumberGlobal = getStoredCardNumber();
         cardNumberGlobal = getCardNumber();
         validateCardNumber(cardNumberGlobal);
+        // getStoredCardNumber();
     }
     showPickupFunctional(); // функционал самовывоза включён по-умолчанию
     pickupButton.onclick = showPickupFunctional; // вкл. функционал самовывоза
@@ -90,40 +110,20 @@ let cardNumberDiv;
 }() );
 
 //---------------------------Номер банковской карты ----------------------------------------------
-// let cardField1 = document.querySelector('#card-fields-1');
-// let cardField2 = document.querySelector('#card-fields-2');
-// let cardField3 = document.querySelector('#card-fields-3');
-// let cardField4 = document.querySelector('#card-fields-4');
-// let cardFields = document.querySelectorAll('#pickup-input-card-number input');
-// let cardNumberDiv = document.querySelector('#pickup-input-card-number');
-// cardFields = document.querySelectorAll('#delivery-input-card-number input');
-// cardNumberDiv = document.querySelector('#delivery-input-card-number');
-
-
-// activateCardFields();
-
-// cardNumberGlobal = getCardNumber();
-// validateCardNumber(cardNumberGlobal);
-
-// console.log(`Первичный запуск. Длина cardNumber ${cardNumberGlobal.length}`);
-
 // главный узел обработки номера карты, запускает всё
-
 function activateCardFields() {
     cardFields.forEach(function(field, i) {
         field.addEventListener('input', (e) => {
-            localStorage.setItem(`card${i+1}`, field.value); // кладём в локхран значение каждого поля
-    
+            // localStorage.setItem(`card${i+1}`, field.value); // кладём в локхран значение каждого поля карты    
             if (e.target.value.length == 4) {
                 goToNextField(e.target.id);    
             }
-        
             let cardNumber = getCardNumber();            
             validateCardNumber(cardNumber);
         });
     });
     
-    // функционал бэкспейса на карточном номере
+    // функционал бэкспейса на полях с кусками номера карты
     cardFields.forEach(field => {    
         field.addEventListener('keydown', (e) => {
             if (e.code == 'Backspace') {            
