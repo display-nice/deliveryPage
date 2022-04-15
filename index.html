@@ -54,15 +54,15 @@
               <h2 class="visually-hidden">Форма самовывоза</h2>
               <form id="pickupForm" action="#" method="POST">
                 <h3>Самовывоз</h3>
-                <div class="input-wrapper input-wrapper--radio-group">
+                <div id="pickup-cities" class="input-wrapper input-wrapper--radio-group">
                   <h4>Город</h4>
-                  <input id="pick-up-led" class="pickup-city-name" type="radio" name="city" value="led" checked />
+                  <input id="pick-up-led" type="radio" name="city" value="led" checked />
                   <label for="pick-up-led">Санкт-Петербург</label>
-                  <input id="pick-up-mow" class="pickup-city-name" type="radio" name="city" value="mow" />
+                  <input id="pick-up-mow" type="radio" name="city" value="mow" />
                   <label for="pick-up-mow">Москва</label>
-                  <input id="pick-up-goj" class="pickup-city-name" type="radio" name="city" value="goj" />
+                  <input id="pick-up-goj" type="radio" name="city" value="goj" />
                   <label for="pick-up-goj">Нижний Новгород</label>
-                  <input id="pick-up-krr" class="pickup-city-name" type="radio" name="city" value="krr" />
+                  <input id="pick-up-krr" type="radio" name="city" value="krr" />
                   <label for="pick-up-krr">Краснодар</label>
                 </div>
                 <div id="pickupAdresses" class="input-wrapper input-wrapper--radio-group">
@@ -81,9 +81,9 @@
                 <!-- <div id="map" style="width: 768px; height:400px" ></div> -->
                 <h3>Способ оплаты</h3>
                 <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
-                  <input id="pickup-payment-card" type="radio" name="payment-method" value="card" checked />
+                  <input id="pickup-payment-card" type="radio" name="pickup-payment-method" value="card" checked />
                   <label for="pickup-payment-card">Карта</label>
-                  <input id="pickup-payment-cash" type="radio" name="payment-method" value="cash" />
+                  <input id="pickup-payment-cash" type="radio" name="pickup-payment-method" value="cash" />
                   <label for="pickup-payment-cash">Наличные</label>
                 </div>
                 <div id="pickup-input-card-number" class="input-wrapper input-wrapper--input-group">
@@ -121,9 +121,9 @@
               <h2 class="visually-hidden">Форма доставки</h2>
               <form id="deliveryForm" action="#" method="POST">
                 <h3>Доставка</h3>
-                <div class="input-wrapper input-wrapper--radio-group" style="display: none;">
+                <div id="delivery-cities" class="input-wrapper input-wrapper--radio-group">
                   <h4>Город</h4>
-                  <input id="delivery-led" type="radio" name="city" value="lED" checked />
+                  <input id="delivery-led" type="radio" name="city" value="led" checked />
                   <label for="delivery-led">Санкт-Петербург</label>
                   <input id="delivery-mow" type="radio" name="city" value="mow" />
                   <label for="delivery-mow">Москва</label>
@@ -132,19 +132,19 @@
                   <input id="delivery-krr" type="radio" name="city" value="krr" />
                   <label for="delivery-krr">Краснодар</label>
                 </div>
-                <div class="input-wrapper input-wrapper--error input-wrapper--input" style="display: none;">
+                <div class="input-wrapper input-wrapper--error input-wrapper--input">
                   <h4>Адрес</h4>
                   <input id="delivery-address" type="text" required />
                   <label for="delivery-address" aria-label="Укажите адрес"></label>
                   <div class="input-wrapper__error">Укажите адрес</div>
                 </div>
-                <div class="input-wrapper input-wrapper--success input-wrapper--input" style="display: none;">
+                <div class="input-wrapper input-wrapper--success input-wrapper--input">
                   <h4>Дата доставки</h4>
                   <input id="delivery-user-date-delivery" type="text" required />
                   <label for="delivery-user-date-delivery" aria-label="Укажите дату доставки"></label>
                   <div class="input-wrapper__error">Укажите дату доставки</div>
                 </div>
-                <div class="input-wrapper input-wrapper--range" style="display: none;">
+                <div class="input-wrapper input-wrapper--range">
                   <h4>Время доставки</h4>
                   <input id="delivery-user-time-delivery" type="range" class="hidden" data-field-type="delivery" />
                   <label for="delivery-user-time-delivery" aria-label="Укажите время доставки"></label>

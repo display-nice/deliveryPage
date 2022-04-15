@@ -6,6 +6,7 @@ let cardNumberGlobal;
 let cardFields;
 let cardNumberDiv;
 
+// document.querySelector('#pick-up-goj').checked = true;
 
 //---------------------------Выбор между самовывозом и доставкой-----------------------------
 ( function() {    
@@ -32,7 +33,30 @@ let cardNumberDiv;
         document.querySelector('#card-fields-2').value = document.querySelector('#deliver-crd-2').value;
         document.querySelector('#card-fields-3').value = document.querySelector('#deliver-crd-3').value;
         document.querySelector('#card-fields-4').value = document.querySelector('#deliver-crd-4').value;
-    }    
+    }
+    //
+    function transferRadioButtons() {
+        if (!pickupButton.classList.contains("active")) {
+            let chosenCity = document.querySelector('#pickup-cities input[name="city"]:checked').value;
+            // console.log(`В самовывозе был выбран город ${chosenCity}`);
+            document.querySelector(`#delivery-cities input[value='${chosenCity}']`).checked = true;
+        }
+        if (!deliveryButton.classList.contains("active")) {
+            let chosenCity = document.querySelector('#delivery-cities input[name="city"]:checked').value;
+            // console.log(`В доставке был выбран город ${chosenCity}`);
+            document.querySelector(`#pickup-cities input[value='${chosenCity}']`).checked = true;
+        }
+        if (!pickupButton.classList.contains("active")) {
+            let paymentMethod = document.querySelector('input[name="pickup-payment-method"]:checked').value;            
+            // console.log(`В самовывозе был выбран метод оплаты ${paymentMethod}`);
+            document.querySelector(`#deliveryForm input[value='${paymentMethod}']`).checked = true;
+        }
+        if (!deliveryButton.classList.contains("active")) {
+            let paymentMethod = document.querySelector('input[name="delivery-payment-method"]:checked').value;
+            // console.log(`В доставке был выбран метод оплаты ${paymentMethod}`);
+            document.querySelector(`#pickupForm input[value='${paymentMethod}']`).checked = true;
+        }
+    }
 
     function showPickupFunctional() {
         cardFields = document.querySelectorAll('#pickup-input-card-number input');
@@ -42,6 +66,7 @@ let cardNumberDiv;
         document.querySelector('.tabs-block__pick-up').hidden = false;
         document.querySelector('.tabs-block__item-delivery').hidden = true;
         
+        transferRadioButtons();
         transferPhoneValues();
         transferCardNumberToPickup();
         activateCardFields();
@@ -56,6 +81,7 @@ let cardNumberDiv;
         document.querySelector('.tabs-block__item-delivery').hidden = false;
         document.querySelector('.tabs-block__pick-up').hidden = true;
         
+        transferRadioButtons();
         transferPhoneValues();
         transferCardNumberToDelivery();
         activateCardFields();
@@ -64,8 +90,10 @@ let cardNumberDiv;
         validateCardNumber(cardNumberGlobal);
         // getStoredCardNumber();
     }
-    showPickupFunctional(); // функционал самовывоза включён по-умолчанию
+    showDeliveryFunctional();
+    // showPickupFunctional(); // функционал самовывоза включён по-умолчанию
     pickupButton.onclick = showPickupFunctional; // вкл. функционал самовывоза
+    // pickupButton.onclick = transferRadioButtons;
     deliveryButton.onclick = showDeliveryFunctional; // вкл. функционал доставки
 }() ); // самовызывающаяся анонимная ф-я
 
