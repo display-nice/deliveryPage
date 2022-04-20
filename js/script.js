@@ -1,10 +1,27 @@
 // глобальные переменные
 
+// const person = {
+//     name: "Dick",
+//     age: 25,
+//     get userAge() {
+//         return this.age;
+//     },
+//     set userAge(number) {
+//         this.age = number;
+//     }
+// };
+// console.log(person.userAge = 30);
+// console.log(person.userAge);
 const phoneFields = document.querySelectorAll('#phone');
 
 let cardNumberGlobal;
+let dateValueGlobal;
 let cardFields;
 let cardNumberDiv;
+
+let now = new Date();
+let nowYear = now.getFullYear();
+let dateField = document.querySelector('[type="date"]');
 
 // document.querySelector('#pick-up-goj').checked = true;
 
@@ -88,6 +105,7 @@ let cardNumberDiv;
         // storedCardNumberGlobal = getStoredCardNumber();
         cardNumberGlobal = getCardNumber();
         validateCardNumber(cardNumberGlobal);
+        validateDate();
         // getStoredCardNumber();
     }
     showDeliveryFunctional();
@@ -266,7 +284,7 @@ phoneFields.forEach(field => {
             } else {
                 phoneForms.forEach(form => {
                     form.classList.remove("input-wrapper--success");
-                form.classList.add("input-wrapper--error");
+                    form.classList.add("input-wrapper--error");
             });
         }
     } else {
@@ -277,6 +295,7 @@ phoneFields.forEach(field => {
     });    
 });
 
+// валидация номера телефона
 function validatePhone(value) {
     let result = value.match(/\+\d{11}\b/);
     if (result) {
@@ -285,6 +304,60 @@ function validatePhone(value) {
         return false;
     }
 }
+
+// ------------------------- Доставка: дата доставки -------------------------------------
+dateField.onchange = validateDate;
+
+function validateDate() {
+    let dateValue = dateField.value;
+    if (dateCheck(dateValue)) {
+        dateField.parentElement.classList.remove("input-wrapper--error");
+        dateField.parentElement.classList.add("input-wrapper--success");
+    } else {
+        dateField.parentElement.classList.remove("input-wrapper--success");
+        dateField.parentElement.classList.add("input-wrapper--error");
+    }    
+}
+
+// проверка на корректность формата даты
+function dateCheck(dateValue) {
+    if (dateValue.match(/^\d{4}[./-]\d{2}[./-]\d{2}$/)) {
+        let day = +dateValue.slice(8);
+        let month = +dateValue.slice(5, 7);
+        let year = +dateValue.slice(0, 4);
+        if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && (year === nowYear || year === nowYear + 1)) {
+            return dateBusinessConditionsCheck(dateValue);
+        } 
+        else {
+            return false;
+        }
+    }
+}
+
+// дополнительная проверка на бизнес-условия
+function dateBusinessConditionsCheck(dateValue) {    
+    let x = new Date(dateValue);
+    x.setHours(0, 0, 0, 0);
+
+    let nowPlusOneDay = new Date();
+    nowPlusOneDay.setDate(nowPlusOneDay.getDate() + 1);
+    nowPlusOneDay.setHours(0, 0, 0, 0);
+
+    let nowPlusSevenDays = new Date();
+    nowPlusSevenDays.setDate(nowPlusSevenDays.getDate() + 7);
+    nowPlusSevenDays.setHours(0, 0, 0, 0);
+
+    if (x >= nowPlusOneDay && x <= nowPlusSevenDays) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+( function() {}
+());
+
+
 
 // //---------------------------Самовывоз: Города и карта----------------------------------------------
 // (function () {
