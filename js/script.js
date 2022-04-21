@@ -16,6 +16,9 @@ const phoneFields = document.querySelectorAll('#phone');
 
 let cardNumberGlobal;
 let dateValueGlobal;
+let deliveryAdressGlobal;
+let deliveryAdressField = document.querySelector('#delivery-address');
+
 let cardFields;
 let cardNumberDiv;
 
@@ -102,11 +105,14 @@ let dateField = document.querySelector('[type="date"]');
         transferPhoneValues();
         transferCardNumberToDelivery();
         activateCardFields();
-        // storedCardNumberGlobal = getStoredCardNumber();
+
+        deliveryAdressGlobal = document.querySelector('#delivery-address').value;
+        validateDeliveryAdress(deliveryAdressGlobal);
+
         cardNumberGlobal = getCardNumber();
         validateCardNumber(cardNumberGlobal);
-        validateDate();
-        // getStoredCardNumber();
+
+        validateDate();        
     }
     showDeliveryFunctional();
     // showPickupFunctional(); // функционал самовывоза включён по-умолчанию
@@ -354,9 +360,22 @@ function dateBusinessConditionsCheck(dateValue) {
     }
 }
 
-( function() {}
-());
-
+//--------------------------------Доставка: ввод адреса доставки---------------------
+// установка статусов на поле
+function validateDeliveryAdress (deliveryAdress) {
+    if (deliveryAdress.length > 0) {
+        deliveryAdressField.parentElement.classList.remove("input-wrapper--error");
+        deliveryAdressField.parentElement.classList.add("input-wrapper--success");
+    } else {
+        deliveryAdressField.parentElement.classList.remove("input-wrapper--success");
+        deliveryAdressField.parentElement.classList.add("input-wrapper--error");
+    }
+}
+// обработчик событий на ввод
+deliveryAdressField.addEventListener('input', (e) => {
+    let deliveryAdress = deliveryAdressField.value;
+    validateDeliveryAdress(deliveryAdress);
+});
 
 
 // //---------------------------Самовывоз: Города и карта----------------------------------------------
