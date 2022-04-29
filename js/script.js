@@ -377,6 +377,47 @@ deliveryAdressField.addEventListener('input', (e) => {
     validateDeliveryAdress(deliveryAdress);
 });
 
+//--------------------------------Доставка: ползунок времени доставки---------------------
+const thumb = document.querySelector('.js_range-slider-thumb');
+const thumbWidth = thumb.getBoundingClientRect().width;
+const area = document.querySelector('.js_range-slider-thumb-area');
+const rangeSlider = document.querySelector('.range-slider');
+const rangeSliderWidth = rangeSlider.getBoundingClientRect().width;
+
+let areaLimitLeft = area.getBoundingClientRect().left;
+let areaLimitRight = areaLimitLeft + area.getBoundingClientRect().width;
+
+console.log(areaLimitLeft, areaLimitRight, area.getBoundingClientRect().width, thumbWidth);
+
+rangeSlider.addEventListener('mousedown', (e) => {    
+    let initialCursorX = e.pageX;
+
+    thumb.addEventListener('mousemove', (e) => {        
+        let dynamicCursorX = e.pageX;
+        let thumbCoordsX = thumb.getBoundingClientRect().left;
+        let shiftAmount = dynamicCursorX - initialCursorX;        
+        // Проверяем выход за левый край
+        if (thumbCoordsX + shiftAmount < areaLimitLeft) {
+            console.log('Отработала левая граница');
+            thumb.style.left = 0 + 'px';
+        }
+        // Проверяем выход за правый край
+        else if (thumbWidth + shiftAmount > rangeSliderWidth) {
+            thumb.style.left = rangeSliderWidth - thumbWidth + 'px';
+            console.log('Отработала правая граница');
+        }
+        else {
+            thumb.style.left = `${shiftAmount + "px"}`;
+            console.log(`shiftAmount = ${shiftAmount}`);
+            console.log(`thumbCoordsX = ${thumbCoordsX}`);
+        }
+    });
+});
+
+// рабочие варианты:
+// thumb.style.transform = `translateX(${left + "px"})`;
+// thumb.style.left = left + 23 + 'px';
+
 
 // //---------------------------Самовывоз: Города и карта----------------------------------------------
 // (function () {
