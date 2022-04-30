@@ -378,41 +378,132 @@ deliveryAdressField.addEventListener('input', (e) => {
 });
 
 //--------------------------------Доставка: ползунок времени доставки---------------------
-const thumb = document.querySelector('.js_range-slider-thumb');
-const thumbWidth = thumb.getBoundingClientRect().width;
-const area = document.querySelector('.js_range-slider-thumb-area');
-const rangeSlider = document.querySelector('.range-slider');
-const rangeSliderWidth = rangeSlider.getBoundingClientRect().width;
+let thumb = document.querySelector('.js_range-slider-thumb');
+let area = document.querySelector('.js_range-slider-thumb-area');
+let leftEdge = document.querySelector('.js_range-slider-thumb-area').getBoundingClientRect().left;
+console.log('leftEdge', leftEdge);
 
-let areaLimitLeft = area.getBoundingClientRect().left;
-let areaLimitRight = areaLimitLeft + area.getBoundingClientRect().width;
+// console.log(areaRectWithScroll.top, leftEdge);
 
-console.log(areaLimitLeft, areaLimitRight, area.getBoundingClientRect().width, thumbWidth);
+// console.log(areaLimitLeft, areaLimitRight, area.getBoundingClientRect().width, thumbWidth);
 
-rangeSlider.addEventListener('mousedown', (e) => {    
-    let initialCursorX = e.pageX;
+thumb.onmousedown = function (e) {
+    thumb.ondragstart = function() {
+        return false;
+    };
+    let thumbLeft = thumb.getBoundingClientRect().left;
+    // console.log(thumbRectWithScroll.top, thumbLeft);
 
-    thumb.addEventListener('mousemove', (e) => {        
-        let dynamicCursorX = e.pageX;
-        let thumbCoordsX = thumb.getBoundingClientRect().left;
-        let shiftAmount = dynamicCursorX - initialCursorX;        
-        // Проверяем выход за левый край
-        if (thumbCoordsX + shiftAmount < areaLimitLeft) {
-            console.log('Отработала левая граница');
-            thumb.style.left = 0 + 'px';
-        }
-        // Проверяем выход за правый край
-        else if (thumbWidth + shiftAmount > rangeSliderWidth) {
-            thumb.style.left = rangeSliderWidth - thumbWidth + 'px';
-            console.log('Отработала правая граница');
-        }
-        else {
-            thumb.style.left = `${shiftAmount + "px"}`;
-            console.log(`shiftAmount = ${shiftAmount}`);
-            console.log(`thumbCoordsX = ${thumbCoordsX}`);
-        }
-    });
-});
+    // let rightEdge = area.offsetWidth - thumbLeft;
+    let rightEdge = area.offsetWidth;
+    // console.log(rightEdge);
+    // console.log(area.offsetWidth, thumbLeft);
+
+    let shiftX = e.pageX - thumbLeft;
+    // console.log(e.pageX);
+
+    document.onmousemove = function(e) {
+        let newLeft = e.pageX - leftEdge - shiftX;
+        console.log(`newLeft = ${newLeft}`);
+        console.log(`e.pageX ${e.pageX}, leftEdge = ${leftEdge}, shiftX = ${shiftX} `);
+        // Ползунок не может выходить за границы
+        if (newLeft < 0) newLeft = 0;
+        if (newLeft > rightEdge) newLeft = rightEdge;
+        
+        thumb.style.left = newLeft + 'px';
+        
+        // Обновление результата
+        // result.innerHTML = Math.round(newLeft / rightBoundary * 100) + '%';
+
+        document.onmouseup = function() {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        };
+    };
+    
+};
+
+// до редактирования
+// const thumb = document.querySelector('.js_range-slider-thumb');
+// const area = document.querySelector('.js_range-slider-thumb-area');
+// const thumbWidth = thumb.getBoundingClientRect().width;
+// const defaultThumbCoords = thumb.getBoundingClientRect().left;
+// const rangeSlider = document.querySelector('.range-slider');
+// const rangeSliderWidth = rangeSlider.getBoundingClientRect().width;
+// let initialCursorX = 0;
+// let areaLimitLeft = area.getBoundingClientRect().left;
+// let areaLimitRight = areaLimitLeft + area.getBoundingClientRect().width;
+// let areaRect = area.getBoundingClientRect();
+// let areaRectWithScroll = {};
+// areaRectWithScroll.top = areaRect.top;
+// leftEdge = areaRect.left;
+
+// rangeSlider.addEventListener('mousedown', (event) => {    
+//     initialCursorX = event.pageX;
+//     // thumb.style.left = `${initialCursorX + "px"}`;
+//     console.log(initialCursorX);
+//     rangeSlider.addEventListener('mousemove', moveThumb);
+//     rangeSlider.addEventListener('mouseup', function() {
+//         rangeSlider.removeEventListener('mousemove', moveThumb);        
+//     });
+    
+// });
+
+// function moveThumb(event) {
+//     let dynamicCursorX = event.pageX;
+//     let thumbCoordsX = thumb.getBoundingClientRect().left;
+//     let shiftAmount = dynamicCursorX - initialCursorX;        
+//     // Проверяем выход за левый край
+//     if (thumbCoordsX + shiftAmount < areaLimitLeft) {
+//         console.log('Отработала левая граница');
+//         thumb.style.left = 0 + 'px';
+//     }
+//     // Проверяем выход за правый край
+//     else if (thumbWidth + shiftAmount > rangeSliderWidth) {
+//         thumb.style.left = rangeSliderWidth - thumbWidth + 'px';
+//         console.log('Отработала правая граница');
+//     }
+//     // если за края не вышли, значит можно двигать
+//     else {
+//         thumb.style.left = `${shiftAmount + "px"}`;
+//         console.log(`shiftAmount = ${shiftAmount}`);
+//         // console.log(`thumbCoordsX = ${thumbCoordsX}`);
+//     }    
+// }
+
+// function handleMouseClick(event) {
+//     console.log('Вы нажали на элемент:', event.target);
+// }
+  
+//   // Добавляем обработчик события
+//   window.addEventListener('click', handleMouseClick);
+  
+  // Убираем обработчик события
+//   window.removeEventListener('click', handleMouseClick);
+  
+// function moveThumb() {
+//     rangeSlider.addEventListener('mousemove', (e) => {        
+//         let dynamicCursorX = e.pageX;
+//         let thumbCoordsX = thumb.getBoundingClientRect().left;
+//         let shiftAmount = dynamicCursorX - initialCursorX;        
+//         // Проверяем выход за левый край
+//         if (thumbCoordsX + shiftAmount < areaLimitLeft) {
+//             console.log('Отработала левая граница');
+//             thumb.style.left = 0 + 'px';
+//         }
+//         // Проверяем выход за правый край
+//         else if (thumbWidth + shiftAmount > rangeSliderWidth) {
+//             thumb.style.left = rangeSliderWidth - thumbWidth + 'px';
+//             console.log('Отработала правая граница');
+//         }
+//         // если за края не вышли, значит можно двигать
+//         else {
+//             thumb.style.left = `${shiftAmount + "px"}`;
+//             console.log(`shiftAmount = ${shiftAmount}`);
+//             console.log(`thumbCoordsX = ${thumbCoordsX}`);
+//         }
+//     });
+// }
 
 // рабочие варианты:
 // thumb.style.transform = `translateX(${left + "px"})`;
