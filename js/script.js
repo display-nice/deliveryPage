@@ -381,7 +381,15 @@ deliveryAdressField.addEventListener('input', (e) => {
 let thumb = document.querySelector('.js_range-slider-thumb');
 let area = document.querySelector('.js_range-slider-thumb-area');
 let leftEdge = document.querySelector('.js_range-slider-thumb-area').getBoundingClientRect().left;
-console.log('leftEdge', leftEdge);
+const thumbTooltip = document.querySelector('.range-slider-tooltip');
+let step = 0;
+let minutes;
+const arr20mins = [1, 4, 7, 10, 13, 16, 19];
+const arr40mins = [2, 5, 8, 11, 14, 17, 20];
+let delTime = '10:00 - 12:00';
+
+// console.log('leftEdge', leftEdge);
+
 
 // console.log(areaRectWithScroll.top, leftEdge);
 
@@ -395,7 +403,9 @@ thumb.onmousedown = function (e) {
     // console.log(thumbRectWithScroll.top, thumbLeft);
 
     // let rightEdge = area.offsetWidth - thumbLeft;
-    let rightEdge = area.offsetWidth;
+    let stepPx = Math.round(area.offsetWidth / 21);
+    let rightEdge = stepPx * 21;
+    // let rightEdge = area.offsetWidth;
     // console.log(rightEdge);
     // console.log(area.offsetWidth, thumbLeft);
 
@@ -405,12 +415,38 @@ thumb.onmousedown = function (e) {
     document.onmousemove = function(e) {
         let newLeft = e.pageX - leftEdge - shiftX;
         console.log(`newLeft = ${newLeft}`);
-        console.log(`e.pageX ${e.pageX}, leftEdge = ${leftEdge}, shiftX = ${shiftX} `);
+        // console.log(`e.pageX - leftEdge - shiftX = newLeft `);
+        // console.log(`${e.pageX} - ${leftEdge} - ${shiftX} = ${newLeft} `);
+        // console.log(stepPx);
+        // console.log(Math.ceil(newLeft / stepPx));
+        if ( Math.floor(newLeft / stepPx) !== step ) {
+            step = Math.floor(newLeft / stepPx);
+            if (newLeft < 0) {step = 0;}
+            else if (newLeft > rightEdge) {step = 21;}
+            
+            
+            if (step % 3 === 0) {minutes = '00';}
+            else if (arr20mins.includes(step)) {minutes = '20';}
+            else if (arr40mins.includes(step)) {minutes = '40';}
+
+            let hours = Math.floor(step * 20 / 60);
+            console.log(minutes, hours);
+            delTime = (10 + hours) + ':' + minutes + ' - ' + (12 + hours) + ':' + minutes;
+
+            thumbTooltip.textContent = `${delTime}`;
+
+            console.log(`delTime = ${delTime}`);
+            // console.log('new step = ', step);            
+            thumb.style.left = step * stepPx + 'px';
+        }
+
+
+        // console.log(stepPx);
         // Ползунок не может выходить за границы
-        if (newLeft < 0) newLeft = 0;
-        if (newLeft > rightEdge) newLeft = rightEdge;
+        // if (newLeft < 0) newLeft = 0;
+        // if (newLeft > rightEdge) newLeft = rightEdge;
         
-        thumb.style.left = newLeft + 'px';
+        // thumb.style.left = newLeft + 'px';
         
         // Обновление результата
         // result.innerHTML = Math.round(newLeft / rightBoundary * 100) + '%';
