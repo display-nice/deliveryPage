@@ -98,7 +98,7 @@
                   <label for="card-fields-4" aria-label="Четвёртые четыре цифр с карты"></label>
                   <div class="input-wrapper__error">Введите верный номер карты</div>
                 </div>
-                <div id="phone-form" class="input-wrapper input-wrapper--input">
+                <div id="phone-form" id="pickup-phone-field" class="input-wrapper input-wrapper--input">
                   <h4>Номер телефона</h4>
                   <input id="phone" name="phone" type="text" placeholder="+7(999)999-99-99" value=""/>
                   <label for="phone" aria-label="Введите верный номер телефона, он должен начинаться с +7"></label>
@@ -132,15 +132,15 @@
                   <input id="delivery-krr" type="radio" name="city" value="krr" />
                   <label for="delivery-krr">Краснодар</label>
                 </div>
-                <div class="input-wrapper input-wrapper--error input-wrapper--input">
+                <div id="delivery-address-field" class="input-wrapper input-wrapper--input">
                   <h4>Адрес</h4>
                   <input id="delivery-address" type="text" title="Всплывающая подсказка" required />
                   <label for="delivery-address" aria-label="Укажите адрес"></label>
                   <div class="input-wrapper__error">Укажите адрес</div>
                 </div>
-                <div class="input-wrapper input-wrapper--input">
+                <div id="delivery-date-field" class="input-wrapper input-wrapper--input">
                   <h4>Дата доставки</h4>
-                  <input id="delivery-user-date-delivery" type="date" required />
+                  <input id="delivery-user-date-delivery" type="date" value="" required />
                   <label for="delivery-user-date-delivery" aria-label="Укажите дату доставки"></label>
                   <div class="input-wrapper__error">Укажите дату доставки (не ранее, чем завтра и не позднее, чем через 7 дней)</div>
                 </div>
@@ -186,7 +186,8 @@
                   <label for="deliver-crd-4" aria-label="Четвёртые четыре цифр с карты"></label>
                   <div class="input-wrapper__error">Введите верный номер карты</div>
                 </div>
-                <div id="phone-form" class="input-wrapper input-wrapper--input">
+                <div id="delivery-phone-field" class="input-wrapper input-wrapper--input">
+                  <!-- id="phone-form" -->
                   <h4>Номер телефона</h4>
                   <input id="phone" name="phone" type="text" placeholder="+7(999)999-99-99"/>
                   <label for="phone" aria-label="Введите верный номер телефона, он должен начинаться с +7"></label>

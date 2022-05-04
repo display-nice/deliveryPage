@@ -1,17 +1,4 @@
 // глобальные переменные
-
-// const person = {
-//     name: "Dick",
-//     age: 25,
-//     get userAge() {
-//         return this.age;
-//     },
-//     set userAge(number) {
-//         this.age = number;
-//     }
-// };
-// console.log(person.userAge = 30);
-// console.log(person.userAge);
 const phoneFields = document.querySelectorAll('#phone');
 
 let cardNumberGlobal;
@@ -298,7 +285,12 @@ phoneFields.forEach(field => {
                 form.classList.remove("input-wrapper--success");
             });
         }
-    });    
+    });
+    field.addEventListener('focus', (e) => {
+        if (field.value == "") {
+            field.value = "+7";
+        }
+    });  
 });
 
 // валидация номера телефона
@@ -453,6 +445,73 @@ function moveThumb(stepPx) {
     // двигаем бегунок на цену одного шага в пикселях
     thumb.style.left = step * stepPx + 'px';
 }
+
+
+//----------------------------Вкл кнопку "заказать" и проверка заполненности полей ---------------------
+(function () {
+    const delForm = document.querySelector('#deliveryForm'),
+        delFields = document.querySelectorAll('#delivery-address-field, #delivery-date-field, #delivery-input-card-number, #delivery-phone-field'),
+        delAddress = document.querySelector('#delivery-address-field'),
+        delDate = document.querySelector('#delivery-date-field'),
+        delCard = document.querySelector('#delivery-input-card-number'),
+        delPhone = document.querySelector('#delivery-phone-field'),
+        pickCard = document.querySelector('#pickup-input-card-number'),
+        pickPhone = document.querySelector('#pickup-phone-field'),
+        delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn');
+        
+        // console.log(delFields);
+    let unfilled = ['Адрес', 'Дата доставки', 'Номер карты'];
+    isLeftToFill ();
+    // let fieldName = 'Адрес';
+    // // console.log(unfilled.indexOf(fieldName));
+    // unfilled.splice(unfilled.indexOf(fieldName), 1);
+    // console.log(`unfilled после обработки: ${unfilled}`);
+    // let unfilled = [];
+
+    delForm.oninput = function () {
+        // console.log('В одном из полей произошло изменение');
+        // if (delAddress.classList.contains('input-wrapper--success') && )
+
+    };
+    function checkFieldsStatus() {
+        let status = true;
+        delFields.forEach(function(field) {
+            let fieldName = field.children[0].textContent;
+            // ищем незаполненные поля, либо содержащие ошибку
+            if (!field.classList.contains('input-wrapper--success')) {
+                status = false;
+                delOrderBtn.disabled = true;
+                if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
+            }
+            else if (field.classList.contains('input-wrapper--success')) {
+                // удаляем из массива имя незаполненного поля
+                unfilled.splice(unfilled.indexOf(fieldName), 1);
+                if (unfilled == []) {status = true;}
+            }
+        });
+        
+        if (status === true) {delOrderBtn.disabled = false;}
+        if (status === false) {delOrderBtn.disabled = true;}
+    }
+    // checkFieldsStatus();
+    
+    function isLeftToFill () {
+        // оборачиваем каждый элемент массива в спан
+        for (let i = 0; i < unfilled.length; ++i) {
+            unfilled[i] = `<span>${unfilled[i]}</span>`;
+        }
+        // склеиваем массив в одну строку, добавляем запятые-разделители, понижаем регистр букв
+        let message = unfilled.reduce((msg, piece) => `${msg.toLowerCase()}, ${piece.toLowerCase()}`);        
+        // заменяем последнюю запятую на " и"
+        let x = message.lastIndexOf(',');
+        message = message.substring(0, x) + ' и' + message.substring(x + 1);
+        console.log(message);
+    }
+    // function toggleOrderBtn () {
+
+    // }
+
+} ());
 
 // Предыдущий вариант без чекпоинтов, с попиксельным сдвигом, вставлять внутрь маусмува
 // if (newLeft < 0) newLeft = 0;
