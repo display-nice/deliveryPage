@@ -15,10 +15,10 @@ let dateField = document.querySelector('[type="date"]');
 
 // document.querySelector('#pick-up-goj').checked = true;
 
+let pickupButton = document.querySelector('.tab[data-tab="pickup"]');
+let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 //---------------------------Выбор между самовывозом и доставкой-----------------------------
 ( function() {    
-    let pickupButton = document.querySelector('.tab[data-tab="pickup"]');
-    let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 
     //трансфер номера телефона сделан не прямой, а через localStorage просто потому, что так захотелось.
     function transferPhoneValues() {
@@ -210,6 +210,7 @@ function getCardNumber() {
 function validateCardNumber(cardNumber) {
     if (cardNumber.length < 16) {
         cardNumberDiv.classList.add("input-wrapper--error");
+        cardNumberDiv.classList.remove("input-wrapper--success");
     } else {
         if (!luhnAlgorythm(cardNumber)){
             // console.log(`Номер не валиден.`);
@@ -451,51 +452,57 @@ function moveThumb(stepPx) {
 (function () {
     const delForm = document.querySelector('#deliveryForm'),
         delFields = document.querySelectorAll('#delivery-address-field, #delivery-date-field, #delivery-input-card-number, #delivery-phone-field'),
-        delAddress = document.querySelector('#delivery-address-field'),
-        delDate = document.querySelector('#delivery-date-field'),
-        delCard = document.querySelector('#delivery-input-card-number'),
-        delPhone = document.querySelector('#delivery-phone-field'),
-        pickCard = document.querySelector('#pickup-input-card-number'),
-        pickPhone = document.querySelector('#pickup-phone-field'),
-        delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn');
-        
-        // console.log(delFields);
-    let unfilled = ['Адрес', 'Дата доставки', 'Номер карты'];
-    isLeftToFill ();
-    // let fieldName = 'Адрес';
-    // // console.log(unfilled.indexOf(fieldName));
-    // unfilled.splice(unfilled.indexOf(fieldName), 1);
-    // console.log(`unfilled после обработки: ${unfilled}`);
-    // let unfilled = [];
+        delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn'),
+        delOrderHint = document.querySelector('#del-hint'),
+        pickForm = document.querySelector('#pickupForm'),
+        pickFields = document.querySelectorAll('#pickup-input-card-number', '#pickup-phone-field'),
+        pickOrderBtn = document.querySelector('#pickupForm .form__submit-btn'),
+        pickOrderHint = document.querySelector('#pick-hint');
+    let unfilled = [];    
+    // let unfilled = ['Адрес', 'Дата доставки', 'Номер карты'];
 
     delForm.oninput = function () {
         // console.log('В одном из полей произошло изменение');
-        // if (delAddress.classList.contains('input-wrapper--success') && )
-
+        let orderBtn = delOrderBtn;
+        let inputFields = delFields;
+        let orderHint = delOrderHint;
+        lookForUnfilled(inputFields, orderBtn, orderHint);
     };
-    function checkFieldsStatus() {
+
+    pickForm.oninput = function() {
+        let orderBtn = pickOrderBtn;
+        let inputFields = pickFields;
+        let orderHint = pickOrderHint;
+        lookForUnfilled(inputFields, orderBtn, orderHint);
+    };
+
+    function lookForUnfilled(inputFields, orderBtn, orderHint) {
+        // status = true если все поля зелёные. false, если поля красные\серые.
         let status = true;
-        delFields.forEach(function(field) {
+        inputFields.forEach(function(field) {
             let fieldName = field.children[0].textContent;
             // ищем незаполненные поля, либо содержащие ошибку
             if (!field.classList.contains('input-wrapper--success')) {
                 status = false;
-                delOrderBtn.disabled = true;
+                orderBtn.disabled = true;
+                // незаполненные поля добавляем в массив (если их ещё там нет)
                 if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
+                console.log(`unfilled сейчас содержит ${unfilled}`);
             }
+            // если же поле позеленело, то ...
             else if (field.classList.contains('input-wrapper--success')) {
-                // удаляем из массива имя незаполненного поля
-                unfilled.splice(unfilled.indexOf(fieldName), 1);
+                // ...удаляем из массива незаполненных имя того поля
+                if (unfilled.includes(fieldName)) {unfilled.splice(unfilled.indexOf(fieldName), 1);}
+                // ...и проверяем, осталось ли в массиве хоть что-то. если массив пустой, status = true.
                 if (unfilled == []) {status = true;}
             }
         });
-        
-        if (status === true) {delOrderBtn.disabled = false;}
-        if (status === false) {delOrderBtn.disabled = true;}
-    }
-    // checkFieldsStatus();
-    
-    function isLeftToFill () {
+
+        // в зависимости от статуса вкл\откл кнопка "ЗАКАЗАТЬ"
+        if (status === true) {orderBtn.disabled = false;}
+        if (status === false) {orderBtn.disabled = true;}
+
+        // ОБРАБОТКА МАССИВА НЕЗАПОЛНЕННЫХ ПОЛЕЙ
         // оборачиваем каждый элемент массива в спан
         for (let i = 0; i < unfilled.length; ++i) {
             unfilled[i] = `<span>${unfilled[i]}</span>`;
@@ -505,13 +512,62 @@ function moveThumb(stepPx) {
         // заменяем последнюю запятую на " и"
         let x = message.lastIndexOf(',');
         message = message.substring(0, x) + ' и' + message.substring(x + 1);
-        console.log(message);
+        // добавляем готовое сообщение на страницу
+        orderHint.innerHTML = message;
+        // очищаем массив незаполненных
+        unfilled = [];
     }
-    // function toggleOrderBtn () {
-
-    // }
 
 } ());
+
+    // function checkFieldsStatus() {
+    //     if (deliveryButton.classList.contains("active")) {
+    //         let orderBtn = delOrderBtn;
+    //         let inputFields = delFields;
+    //         lookForUnfilled(inputFields, orderBtn);
+    //     }
+    //     else if (pickupButton.classList.contains("active")) {
+    //         let orderBtn = pickOrderBtn;
+    //         let inputFields = pickFields;
+    //         lookForUnfilled(inputFields, orderBtn);
+    //     }        
+    // }
+
+// function checkFieldsStatus() {
+//     let status = true;
+//     if (deliveryButton.classList.contains("active")) {
+//         let orderBtn = delOrderBtn;
+//         delFields.forEach(function(field) {
+//             let fieldName = field.children[0].textContent;
+//             // ищем незаполненные поля, либо содержащие ошибку
+//             if (!field.classList.contains('input-wrapper--success')) {
+//                 status = false;
+//                 orderBtn.disabled = true;
+//                 if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
+//             }
+//             else if (field.classList.contains('input-wrapper--success')) {
+//                 // удаляем из массива имя незаполненного поля
+//                 unfilled.splice(unfilled.indexOf(fieldName), 1);
+//                 if (unfilled == []) {status = true;}
+//             }
+//         });
+//         if (status === true) {orderBtn.disabled = false;}
+//         if (status === false) {orderBtn.disabled = true;}
+//     }
+//     else if (pickupButton.classList.contains("active")) {
+        
+//     }
+    
+// }
+
+// delAddress = document.querySelector('#delivery-address-field'),
+// delDate = document.querySelector('#delivery-date-field'),
+// delCard = document.querySelector('#delivery-input-card-number'),
+// delPhone = document.querySelector('#delivery-phone-field'),
+// pickCard = document.querySelector('#pickup-input-card-number'),
+// pickPhone = document.querySelector('#pickup-phone-field'),
+
+
 
 // Предыдущий вариант без чекпоинтов, с попиксельным сдвигом, вставлять внутрь маусмува
 // if (newLeft < 0) newLeft = 0;

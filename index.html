@@ -98,7 +98,8 @@
                   <label for="card-fields-4" aria-label="Четвёртые четыре цифр с карты"></label>
                   <div class="input-wrapper__error">Введите верный номер карты</div>
                 </div>
-                <div id="phone-form" id="pickup-phone-field" class="input-wrapper input-wrapper--input">
+                <div id="pickup-phone-field" class="input-wrapper input-wrapper--input">
+                  <!-- id="phone-form" -->
                   <h4>Номер телефона</h4>
                   <input id="phone" name="phone" type="text" placeholder="+7(999)999-99-99" value=""/>
                   <label for="phone" aria-label="Введите верный номер телефона, он должен начинаться с +7"></label>
@@ -112,7 +113,7 @@
                     <p class="form__submit-header">
                       Осталось заполнить:
                     </p>
-                    <p class="form__submit-help"><span>номер карты</span> и <span>телефон</span></p>
+                    <p id="pick-hint" class="form__submit-help"><span>номер карты</span> и <span>телефон</span></p>
                   </div>
                 </div>
               </form>
@@ -200,7 +201,7 @@
                     <p class="form__submit-header">
                       Осталось заполнить:
                     </p>
-                    <p class="form__submit-help"><span>адрес</span> и <span>телефон</span></p>
+                    <p id="del-hint" class="form__submit-help"><span>адрес</span> и <span>телефон</span></p>
                   </div>
                 </div>
               </form>
