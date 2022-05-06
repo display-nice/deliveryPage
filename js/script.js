@@ -266,6 +266,37 @@ function luhnAlgorythm(value) {
 // --------------------------------- Номера телефонов ------------------------------------------
 const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
 
+phoneFields.forEach(field => {    
+    field.addEventListener('input', () => {
+        processPhone(event);
+    });
+    field.addEventListener('focus', () => {
+        processPhone(event);
+    });
+});
+
+function processPhone(event) {
+    let result = event.target.value.match(/\+\d{11}\b/);
+    
+    if (event.target.value.length <= 2) {
+        event.target.value = "+7";
+    }
+    
+    localStorage.setItem('phone', event.target.value); // сохраняем инпут в лок. хранилище
+    
+    if (result) {
+        phoneForms.forEach(form => {
+            form.classList.remove("input-wrapper--error");
+            form.classList.add("input-wrapper--success");
+        });
+    } else {
+        phoneForms.forEach(form => {
+            form.classList.remove("input-wrapper--success");
+            form.classList.add("input-wrapper--error");
+        });
+    }
+}
+// предыдущий вариант функционала (полностью работает)
 // phoneFields.forEach(field => {
 //     field.addEventListener('input', (e) => {
 
@@ -305,41 +336,6 @@ const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-pho
 //         return false;
 //     }
 // }
-
-
-phoneFields.forEach(field => {
-    
-    field.addEventListener('input', () => {
-        // console.log(field);
-        processPhone(event);
-    });
-    field.addEventListener('focus', () => {
-        processPhone(event);
-    });
-});
-
-function processPhone(event) {
-    let result = event.target.value.match(/\+\d{11}\b/);
-
-    if (event.target.value.length <= 2) {
-        event.target.value = "+7";
-    }
-    
-    localStorage.setItem('phone', event.target.value); // сохраняем инпут в лок. хранилище
-    
-    if (result) {
-        phoneForms.forEach(form => {
-            form.classList.remove("input-wrapper--error");
-            form.classList.add("input-wrapper--success");
-        });
-    } else {
-        phoneForms.forEach(form => {
-            form.classList.remove("input-wrapper--success");
-            form.classList.add("input-wrapper--error");
-        });
-    }
-}
-
 // ------------------------- Доставка: дата доставки -------------------------------------
 dateField.onchange = validateDate;
 
