@@ -21,11 +21,11 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 ( function() {    
 
     //трансфер номера телефона сделан не прямой, а через localStorage просто потому, что так захотелось.
-    function transferPhoneValues() {
-        phoneFields.forEach(field => {
-            field.value = localStorage.getItem('phone');
-        });
-    }
+    // function transferPhoneValues() {
+    //     phoneFields.forEach(field => {
+    //         field.value = localStorage.getItem('phone');
+    //     });
+    // }
 
     //прямой трансфер номера карты из доставки в самовывоз
     function transferCardNumberToDelivery() {
@@ -74,9 +74,12 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
         document.querySelector('.tabs-block__item-delivery').hidden = true;
         
         transferRadioButtons();
-        transferPhoneValues();
+
+        // transferPhoneValues();
+
         transferCardNumberToPickup();
         activateCardFields();
+        
         cardNumberGlobal = getCardNumber();
         validateCardNumber(cardNumberGlobal);
     }
@@ -89,7 +92,9 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
         document.querySelector('.tabs-block__pick-up').hidden = true;
         
         transferRadioButtons();
-        transferPhoneValues();
+
+        // transferPhoneValues();
+
         transferCardNumberToDelivery();
         activateCardFields();
 
@@ -259,48 +264,79 @@ function luhnAlgorythm(value) {
 }
 
 // --------------------------------- Номера телефонов ------------------------------------------
-const phoneForms = document.querySelectorAll('#phone-form');
+const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
+
+// phoneFields.forEach(field => {
+//     field.addEventListener('input', (e) => {
+
+//         if (field.value.length <= 2) {
+//             field.value = "+7";
+//         }
+        
+//         localStorage.setItem('phone', e.target.value); // сохраняем инпут в лок. хранилище
+        
+//         if (validatePhone(e.target.value)) {
+//             phoneForms.forEach(form => {
+//                 form.classList.remove("input-wrapper--error");
+//                 form.classList.add("input-wrapper--success");
+//             });
+//         } else {
+//             phoneForms.forEach(form => {
+//                 form.classList.remove("input-wrapper--success");
+//                 form.classList.add("input-wrapper--error");
+//             });
+//         }
+//     });
+
+//     field.addEventListener('focus', (e) => {
+//         if (field.value.length <= 2) {
+//             field.value = "+7";
+//         }
+//     });
+
+// });
+
+// // валидация номера телефона
+// function validatePhone(value) {
+//     let result = value.match(/\+\d{11}\b/);
+//     if (result) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
+
 
 phoneFields.forEach(field => {
-    field.addEventListener('input', (e) => {
-        if (field.value == "") {
-            field.value = "+7";
-        }
-        
-        localStorage.setItem('phone', e.target.value); // сохраняем инпут в лок. хранилище
-        
-        if (field.value.length >= 12) {
-            if (validatePhone(e.target.value)) {
-                phoneForms.forEach(form => {
-                    form.classList.remove("input-wrapper--error");
-                    form.classList.add("input-wrapper--success");
-                });
-            } else {
-                phoneForms.forEach(form => {
-                    form.classList.remove("input-wrapper--success");
-                    form.classList.add("input-wrapper--error");
-            });
-        }
-    } else {
-        phoneForms.forEach(form => {
-                form.classList.remove("input-wrapper--success");
-            });
-        }
+    
+    field.addEventListener('input', () => {
+        // console.log(field);
+        processPhone(event);
     });
-    field.addEventListener('focus', (e) => {
-        if (field.value == "") {
-            field.value = "+7";
-        }
-    });  
+    field.addEventListener('focus', () => {
+        processPhone(event);
+    });
 });
 
-// валидация номера телефона
-function validatePhone(value) {
-    let result = value.match(/\+\d{11}\b/);
+function processPhone(event) {
+    let result = event.target.value.match(/\+\d{11}\b/);
+
+    if (event.target.value.length <= 2) {
+        event.target.value = "+7";
+    }
+    
+    localStorage.setItem('phone', event.target.value); // сохраняем инпут в лок. хранилище
+    
     if (result) {
-        return true;
+        phoneForms.forEach(form => {
+            form.classList.remove("input-wrapper--error");
+            form.classList.add("input-wrapper--success");
+        });
     } else {
-        return false;
+        phoneForms.forEach(form => {
+            form.classList.remove("input-wrapper--success");
+            form.classList.add("input-wrapper--error");
+        });
     }
 }
 
@@ -487,7 +523,7 @@ function moveThumb(stepPx) {
                 orderBtn.disabled = true;
                 // незаполненные поля добавляем в массив (если их ещё там нет)
                 if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
-                console.log(`unfilled сейчас содержит ${unfilled}`);
+                // console.log(`unfilled сейчас содержит ${unfilled}`);
             }
             // если же поле позеленело, то ...
             else if (field.classList.contains('input-wrapper--success')) {
