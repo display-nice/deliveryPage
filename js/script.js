@@ -118,13 +118,12 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 ( function() {
     const pickupCardButton = document.querySelector('#pickup-payment-card'),
     pickupCashButton = document.querySelector('#pickup-payment-cash'),
-    pickupCardNumberDiv = document.querySelector('#pickup-input-card-number'),
-    
+    pickupCardNumberDiv = document.querySelector('#pickup-input-card-number'),    
     deliveryCardButton = document.querySelector('#delivery-payment-card'),
-        deliveryCashButton = document.querySelector('#delivery-payment-cash'),
-        deliveryCardNumberDiv = document.querySelector('#delivery-input-card-number');        
+    deliveryCashButton = document.querySelector('#delivery-payment-cash'),
+    deliveryCardNumberDiv = document.querySelector('#delivery-input-card-number');        
         
-        let payPickupWithCash = function() {        
+    let payPickupWithCash = function() {        
         pickupCardNumberDiv.style.cssText = "display: none";
     };
     let payPickupWithCard = function() {
@@ -141,16 +140,6 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
     pickupCashButton.onclick = payPickupWithCash;
     deliveryCardButton.onclick = payDeliveryWithCard;
     deliveryCashButton.onclick = payDeliveryWithCash;
-    // pickupCardButtons.forEach(button => {
-    //     button.onclick = payPickupWithCard;
-    // });
-    
-    // pickupCashButtons.forEach(button => {
-        //     button.onclick = payPickupWithCash;
-    // });
-    
-    // cashButton.onclick = payWithCash;
-    // cardButton.onclick = payWithCard;
 }() );
 
 //---------------------------Номер банковской карты ----------------------------------------------
@@ -511,8 +500,13 @@ function moveThumb(stepPx) {
     function lookForUnfilled(inputFields, orderBtn, orderHint) {
         // status = true если все поля зелёные. false, если поля красные\серые.
         let status = true;
-        inputFields.forEach(function(field) {
+
+        for (let field of inputFields) {
             let fieldName = field.children[0].textContent;
+            if (field.style.display === 'none') {
+                continue;
+            }
+            // console.log(fieldName);
             // ищем незаполненные поля, либо содержащие ошибку
             if (!field.classList.contains('input-wrapper--success')) {
                 status = false;
@@ -528,7 +522,7 @@ function moveThumb(stepPx) {
                 // ...и проверяем, осталось ли в массиве хоть что-то. если массив пустой, status = true.
                 if (unfilled == []) {status = true;}
             }
-        });
+        }
 
         // в зависимости от статуса вкл\откл кнопка "ЗАКАЗАТЬ"
         if (status === true) {orderBtn.disabled = false;}
@@ -539,11 +533,18 @@ function moveThumb(stepPx) {
         for (let i = 0; i < unfilled.length; ++i) {
             unfilled[i] = `<span>${unfilled[i]}</span>`;
         }
-        // склеиваем массив в одну строку, добавляем запятые-разделители, понижаем регистр букв
-        let message = unfilled.reduce((msg, piece) => `${msg.toLowerCase()}, ${piece.toLowerCase()}`);        
-        // заменяем последнюю запятую на " и"
-        let x = message.lastIndexOf(',');
-        message = message.substring(0, x) + ' и' + message.substring(x + 1);
+
+        let message;        
+        if (unfilled.length > 1) {
+            // склеиваем массив в одну строку, добавляем запятые-разделители, понижаем регистр букв
+            message = unfilled.reduce((msg, piece) => `${msg.toLowerCase()}, ${piece.toLowerCase()}`);
+            let x = message.lastIndexOf(',');
+            // заменяем последнюю запятую на " и"
+            message = message.substring(0, x) + ' и' + message.substring(x + 1);
+        } 
+        else if (unfilled.length === 1) {
+            message = unfilled[0].toLowerCase();
+        }        
         // добавляем готовое сообщение на страницу
         orderHint.innerHTML = message;
         // очищаем массив незаполненных
