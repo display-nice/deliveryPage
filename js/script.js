@@ -1,31 +1,44 @@
 // глобальные переменные
+const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
 const phoneFields = document.querySelectorAll('#phone');
 
-let cardNumberGlobal;
-let dateValueGlobal;
-let deliveryAdressGlobal;
+const delPhoneForm = document.querySelector('#delivery-phone-field'),
+      delPhoneField = document.querySelector('#delivery-phone-field #phone'),
+      pickPhoneForm = document.querySelector('#pickup-phone-field'),
+      pickPhoneField = document.querySelector('#pickup-phone-field #phone');
+
+
+const delForm = document.querySelector('#deliveryForm'),
+        delFields = document.querySelectorAll('#delivery-address-field, #delivery-date-field, #delivery-input-card-number, #delivery-phone-field'),
+        delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn'),
+        delOrderHint = document.querySelector('#del-hint'),
+        pickForm = document.querySelector('#pickupForm'),
+        pickFields = document.querySelectorAll('#pickup-input-card-number, #pickup-phone-field'),
+        pickOrderBtn = document.querySelector('#pickupForm .form__submit-btn'),
+        pickOrderHint = document.querySelector('#pick-hint');
+let unfilled = [];
+
+const pickupButton = document.querySelector('.tab[data-tab="pickup"]'),
+      deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
+
 let deliveryAdressField = document.querySelector('#delivery-address');
 
 let cardFields;
 let cardNumberDiv;
 
-let now = new Date();
-let nowYear = now.getFullYear();
-let dateField = document.querySelector('[type="date"]');
+let now = new Date(),
+    nowYear = now.getFullYear(),
+    dateField = document.querySelector('[type="date"]');
 
-// document.querySelector('#pick-up-goj').checked = true;
-
-let pickupButton = document.querySelector('.tab[data-tab="pickup"]');
-let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 //---------------------------Выбор между самовывозом и доставкой-----------------------------
 ( function() {    
 
     //трансфер номера телефона сделан не прямой, а через localStorage просто потому, что так захотелось.
-    // function transferPhoneValues() {
-    //     phoneFields.forEach(field => {
-    //         field.value = localStorage.getItem('phone');
-    //     });
-    // }
+    function transferPhoneValues() {
+        phoneFields.forEach(field => {
+            field.value = localStorage.getItem('phone');
+        });
+    }
 
     //прямой трансфер номера карты из доставки в самовывоз
     function transferCardNumberToDelivery() {
@@ -41,7 +54,7 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
         document.querySelector('#card-fields-3').value = document.querySelector('#deliver-crd-3').value;
         document.querySelector('#card-fields-4').value = document.querySelector('#deliver-crd-4').value;
     }
-    //
+    
     function transferRadioButtons() {
         if (!pickupButton.classList.contains("active")) {
             let chosenCity = document.querySelector('#pickup-cities input[name="city"]:checked').value;
@@ -75,13 +88,15 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
         
         transferRadioButtons();
 
-        // transferPhoneValues();
+        transferPhoneValues();
+        validatePhone(pickPhoneForm, pickPhoneField);
 
         transferCardNumberToPickup();
         activateCardFields();
         
-        cardNumberGlobal = getCardNumber();
-        validateCardNumber(cardNumberGlobal);
+        validateCardNumber(getCardNumber());
+
+        lookForUnfilled(pickFields, pickOrderBtn, pickOrderHint);
     }
     function showDeliveryFunctional() {
         cardFields = document.querySelectorAll('#delivery-input-card-number input');
@@ -92,22 +107,22 @@ let deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
         document.querySelector('.tabs-block__pick-up').hidden = true;
         
         transferRadioButtons();
-
-        // transferPhoneValues();
-
+        
+        transferPhoneValues();
+        validatePhone(delPhoneForm, delPhoneField);
+        
         transferCardNumberToDelivery();
         activateCardFields();
+        
+        validateDeliveryAdress(deliveryAdressField.value);
+        
+        validateCardNumber(getCardNumber());
 
-        deliveryAdressGlobal = document.querySelector('#delivery-address').value;
-        validateDeliveryAdress(deliveryAdressGlobal);
-
-        cardNumberGlobal = getCardNumber();
-        validateCardNumber(cardNumberGlobal);
-
-        validateDate();        
+        validateDate();
+        lookForUnfilled(delFields, delOrderBtn, delOrderHint);
     }
-    showDeliveryFunctional();
-    // showPickupFunctional(); // функционал самовывоза включён по-умолчанию
+    // showDeliveryFunctional();
+    showPickupFunctional(); // функционал самовывоза включён по-умолчанию
     pickupButton.onclick = showPickupFunctional; // вкл. функционал самовывоза
     // pickupButton.onclick = transferRadioButtons;
     deliveryButton.onclick = showDeliveryFunctional; // вкл. функционал доставки
@@ -253,38 +268,67 @@ function luhnAlgorythm(value) {
 }
 
 // --------------------------------- Номера телефонов ------------------------------------------
-const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
+// const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
+// const phoneFields = document.querySelectorAll('#phone');
 
-phoneFields.forEach(field => {    
+// const delPhoneForm = document.querySelector('#delivery-phone-field'),
+//       delPhoneField = document.querySelector('#delivery-phone-field #phone'),
+//       pickPhoneForm = document.querySelector('#pickup-phone-field'),
+//       pickPhoneField = document.querySelector('#pickup-phone-field #phone');
+phoneFields.forEach(field => {
+    let form = field.parentElement;
+
     field.addEventListener('input', () => {
-        processPhone(event);
+        validatePhone(form, field);
+        phonePlus7(field);
     });
     field.addEventListener('focus', () => {
-        processPhone(event);
+        validatePhone(form, field);
+        phonePlus7(field);
     });
 });
 
-function processPhone(event) {
-    let result = event.target.value.match(/\+\d{11}\b/);
+function validatePhone(phoneForm, phoneField) {
+    let result = phoneField.value.match(/\+\d{11}\b/);
     
-    if (event.target.value.length <= 2) {
-        event.target.value = "+7";
-    }
     
-    localStorage.setItem('phone', event.target.value); // сохраняем инпут в лок. хранилище
     
-    if (result) {
-        phoneForms.forEach(form => {
-            form.classList.remove("input-wrapper--error");
-            form.classList.add("input-wrapper--success");
-        });
+    if (result) {        
+        phoneForm.classList.remove("input-wrapper--error");
+        phoneForm.classList.add("input-wrapper--success");        
     } else {
-        phoneForms.forEach(form => {
-            form.classList.remove("input-wrapper--success");
-            form.classList.add("input-wrapper--error");
-        });
+        phoneForm.classList.remove("input-wrapper--success");
+        phoneForm.classList.add("input-wrapper--error");        
     }
 }
+
+function phonePlus7(field) {
+    console.log(field.value);
+    if (field.value.length <= 2) {
+        field.value = "+7";
+    }
+    localStorage.setItem('phone', field.value); // сохраняем инпут в лок. хранилище
+}
+
+// function validatePhone(event) {
+//     let result = event.target.value.match(/\+\d{11}\b/);
+    
+//     localStorage.setItem('phone', event.target.value); // сохраняем инпут в лок. хранилище
+    
+//     if (result) {
+//         phoneForms.forEach(form => {
+//             form.classList.remove("input-wrapper--error");
+//             form.classList.add("input-wrapper--success");
+//         });
+//     } else {
+//         phoneForms.forEach(form => {
+//             form.classList.remove("input-wrapper--success");
+//             form.classList.add("input-wrapper--error");
+//         });
+//     }
+// }
+
+
 // предыдущий вариант функционала (полностью работает)
 // phoneFields.forEach(field => {
 //     field.addEventListener('input', (e) => {
@@ -326,7 +370,7 @@ function processPhone(event) {
 //     }
 // }
 // ------------------------- Доставка: дата доставки -------------------------------------
-dateField.onchange = validateDate;
+dateField.oninput = validateDate;
 
 function validateDate() {
     let dateValue = dateField.value;
@@ -336,7 +380,7 @@ function validateDate() {
     } else {
         dateField.parentElement.classList.remove("input-wrapper--success");
         dateField.parentElement.classList.add("input-wrapper--error");
-    }    
+    }
 }
 
 // проверка на корректность формата даты
@@ -376,7 +420,7 @@ function dateBusinessConditionsCheck(dateValue) {
 
 //--------------------------------Доставка: ввод адреса доставки---------------------
 // установка статусов на поле
-function validateDeliveryAdress (deliveryAdress) {
+function validateDeliveryAdress(deliveryAdress) {
     if (deliveryAdress.length > 0) {
         deliveryAdressField.parentElement.classList.remove("input-wrapper--error");
         deliveryAdressField.parentElement.classList.add("input-wrapper--success");
@@ -387,8 +431,8 @@ function validateDeliveryAdress (deliveryAdress) {
 }
 // обработчик событий на ввод
 deliveryAdressField.addEventListener('input', (e) => {
-    let deliveryAdress = deliveryAdressField.value;
-    validateDeliveryAdress(deliveryAdress);
+    // let deliveryAdress = deliveryAdressField.value;
+    validateDeliveryAdress(deliveryAdressField.value);
 });
 
 //--------------------------------Доставка: ползунок времени доставки---------------------
@@ -470,97 +514,101 @@ function moveThumb(stepPx) {
 
 
 //----------------------------Вкл кнопку "заказать" и проверка заполненности полей ---------------------
-(function () {
-    const delForm = document.querySelector('#deliveryForm'),
-        delFields = document.querySelectorAll('#delivery-address-field, #delivery-date-field, #delivery-input-card-number, #delivery-phone-field'),
-        delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn'),
-        delOrderHint = document.querySelector('#del-hint'),
-        pickForm = document.querySelector('#pickupForm'),
-        pickFields = document.querySelectorAll('#pickup-input-card-number', '#pickup-phone-field'),
-        pickOrderBtn = document.querySelector('#pickupForm .form__submit-btn'),
-        pickOrderHint = document.querySelector('#pick-hint');
-    let unfilled = [];    
-    // let unfilled = ['Адрес', 'Дата доставки', 'Номер карты'];
 
-    delForm.oninput = function () {
-        // console.log('В одном из полей произошло изменение');
-        let orderBtn = delOrderBtn;
-        let inputFields = delFields;
-        let orderHint = delOrderHint;
-        lookForUnfilled(inputFields, orderBtn, orderHint);
-    };
+    
+   
+// let unfilled = ['Адрес', 'Дата доставки', 'Номер карты'];
 
-    pickForm.oninput = function() {
-        let orderBtn = pickOrderBtn;
-        let inputFields = pickFields;
-        let orderHint = pickOrderHint;
-        lookForUnfilled(inputFields, orderBtn, orderHint);
-    };
+window.onload = function () {
+    lookForUnfilled(delFields, delOrderBtn, delOrderHint);
+    lookForUnfilled(pickFields, pickOrderBtn, pickOrderHint);
+};
 
-    function lookForUnfilled(inputFields, orderBtn, orderHint) {
-        // status = true если все поля зелёные. false, если поля красные\серые.
-        let status = true;
+delForm.oninput = function () {
+    lookForUnfilled(delFields, delOrderBtn, delOrderHint);
+};
 
-        for (let field of inputFields) {
-            let fieldName = field.children[0].textContent;
-            if (field.style.display === 'none') {
-                continue;
-            }
-            // console.log(fieldName);
-            // ищем незаполненные поля, либо содержащие ошибку
-            if (!field.classList.contains('input-wrapper--success')) {
-                status = false;
-                orderBtn.disabled = true;
-                // незаполненные поля добавляем в массив (если их ещё там нет)
-                if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
-                // console.log(`unfilled сейчас содержит ${unfilled}`);
-            }
-            // если же поле позеленело, то ...
-            else if (field.classList.contains('input-wrapper--success')) {
-                // ...удаляем из массива незаполненных имя того поля
-                if (unfilled.includes(fieldName)) {unfilled.splice(unfilled.indexOf(fieldName), 1);}
-                // ...и проверяем, осталось ли в массиве хоть что-то. если массив пустой, status = true.
-                if (unfilled == []) {status = true;}
-            }
+
+pickForm.oninput = function() {
+    lookForUnfilled(pickFields, pickOrderBtn, pickOrderHint);
+};
+
+function lookForUnfilled(inputFields, orderBtn, orderHint) {
+    // status = true если все поля зелёные. false, если поля красные\серые.
+    let status;
+    for (let field of inputFields) {
+        let fieldName = field.children[0].textContent;
+        // console.log('Начало цикла. Проверка ', fieldName);
+        if (field.style.display === 'none') {
+            // console.log('Поле скрыто. Запускаю проверку следующего поля.');
+            continue;
         }
-
-        // в зависимости от статуса вкл\откл кнопка "ЗАКАЗАТЬ"
-        if (status === true) {orderBtn.disabled = false;}
-        if (status === false) {orderBtn.disabled = true;}
-
-        // ОБРАБОТКА МАССИВА НЕЗАПОЛНЕННЫХ ПОЛЕЙ
-        // оборачиваем каждый элемент массива в спан
-        for (let i = 0; i < unfilled.length; ++i) {
-            unfilled[i] = `<span>${unfilled[i]}</span>`;
+        // ищем незаполненные поля, либо содержащие ошибку
+        if (!field.classList.contains('input-wrapper--success')) {
+            // console.log("Поле не зелёное. Устанавливаю status = false");
+            status = false;
+            orderBtn.disabled = true;
+            // незаполненные поля добавляем в массив (если их ещё там нет)
+            if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
         }
+        // если же поле позеленело, то ...
+        else if (field.classList.contains('input-wrapper--success')) {
+            // console.log("Поле зелёное! Проверяю unfilled...");
+            // ...удаляем из массива незаполненных имя того поля
+            if (unfilled.includes(fieldName)) {unfilled.splice(unfilled.indexOf(fieldName), 1);}
+            // ...и проверяем, осталось ли в массиве хоть что-то. если массив пустой, status = true.
+            // console.log(`Длина unfilled сейчас ${unfilled.length}`);
+            if (unfilled.length === 0) {status = true;}
+            // console.log(`unfilled = ${unfilled}, status = ${status}`);
+            // console.log(`Найдено зелёное поле. fieldName = ${fieldName}`);
+        }
+    }
+    
+    // в зависимости от статуса вкл\откл кнопка "ЗАКАЗАТЬ"
+    if (status === true) {orderBtn.disabled = false;}
+    if (status === false) {orderBtn.disabled = true;}
+    // console.log('Весь цикл завершён. status теперь', status);
+    // console.log('-------------------------------------------------------------');
 
-        let message;        
-        if (unfilled.length > 1) {
-            // склеиваем массив в одну строку, добавляем запятые-разделители, понижаем регистр букв
-            message = unfilled.reduce((msg, piece) => `${msg.toLowerCase()}, ${piece.toLowerCase()}`);
-            let x = message.lastIndexOf(',');
-            // заменяем последнюю запятую на " и"
-            message = message.substring(0, x) + ' и' + message.substring(x + 1);
-        } 
-        else if (unfilled.length === 1) {
-            message = unfilled[0].toLowerCase();
-        }        
-        // добавляем готовое сообщение на страницу
-        orderHint.innerHTML = message;
-        // очищаем массив незаполненных
-        unfilled = [];
+    // ОБРАБОТКА МАССИВА НЕЗАПОЛНЕННЫХ ПОЛЕЙ
+    // оборачиваем каждый элемент массива в спан
+    for (let i = 0; i < unfilled.length; ++i) {
+        unfilled[i] = `<span>${unfilled[i]}</span>`;
     }
 
-} ());
+    let message;        
+    if (unfilled.length > 1) {
+        // склеиваем массив в одну строку, добавляем запятые-разделители, понижаем регистр букв
+        message = unfilled.reduce((msg, piece) => `${msg.toLowerCase()}, ${piece.toLowerCase()}`);
+        let x = message.lastIndexOf(',');
+        // заменяем последнюю запятую на " и"
+        message = message.substring(0, x) + ' и' + message.substring(x + 1);
+        orderHint.previousElementSibling.hidden = false;
+    } 
+    else if (unfilled.length === 1) {
+        message = unfilled[0].toLowerCase();
+        orderHint.previousElementSibling.hidden = false;
+    }
+    else if (unfilled.length === 0) {
+        message = "";
+        orderHint.previousElementSibling.hidden = true;
+    }
+    // добавляем готовое сообщение на страницу
+    orderHint.innerHTML = message;
+    // очищаем массив незаполненных
+    unfilled = [];
+}
+    
 
-    // function checkFieldsStatus() {
+
+// function checkFieldsStatus() {
     //     if (deliveryButton.classList.contains("active")) {
-    //         let orderBtn = delOrderBtn;
-    //         let inputFields = delFields;
-    //         lookForUnfilled(inputFields, orderBtn);
-    //     }
-    //     else if (pickupButton.classList.contains("active")) {
-    //         let orderBtn = pickOrderBtn;
+        //         let orderBtn = delOrderBtn;
+        //         let inputFields = delFields;
+        //         lookForUnfilled(inputFields, orderBtn);
+        //     }
+        //     else if (pickupButton.classList.contains("active")) {
+            //         let orderBtn = pickOrderBtn;
     //         let inputFields = pickFields;
     //         lookForUnfilled(inputFields, orderBtn);
     //     }        
