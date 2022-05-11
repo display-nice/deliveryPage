@@ -129,10 +129,9 @@ let now = new Date(),
 }() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Самовывоз: Города и карта----------------------------------------------
-
-    let displayedMap = document.querySelector('#map2gis');
+( function() {
     let inputs = document.querySelectorAll('input');
-    let pickupCityNames = document.querySelectorAll('.pickup-city-name');
+    let pickupCityNames = document.querySelectorAll('#pickup-cities input');    
     let citiesObject;
     let deliveryPoints;
     let cityID;
@@ -217,11 +216,11 @@ let now = new Date(),
     pickupCityNames.forEach(city => {
         city.addEventListener('click', (event) => {
             cityID = event.target.value;
-            console.log(cityID);
+            // console.log(cityID);
             createPickupPoints(cityID);
         });
     });    
-
+}() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Переключение типа оплаты----------------------------------------------
 ( function() {

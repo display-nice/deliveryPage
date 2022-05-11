@@ -11,7 +11,6 @@
     <link rel="preload" href="./fonts/Montserrat-Bold.woff2" as="font" crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/style.css" />
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <script async src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
     <script src="/js/2gisfull.js"></script>
     <script id="map2gis" type="text/javascript">
       let map;      
@@ -20,7 +19,7 @@
               center: [59.848325, 30.256839],
               zoom: 11
           });
-          // DG.marker([59.848325, 30.256839]).addTo(map);    
+          // DG.marker([59.848325, 30.256839]).addTo(map); // это можно не включать
       });
     </script>
   </head>
@@ -65,19 +64,7 @@
                   <input id="pick-up-krr" type="radio" name="city" value="krr" />
                   <label for="pick-up-krr">Краснодар</label>
                 </div>
-                <div id="pickupAdresses" class="input-wrapper input-wrapper--radio-group">
-                  <!-- <h4>Адрес пункта выдачи заказов</h4>
-                  <input id="pick-up-led-address-1" type="radio" name="led-address" value="Ленина, 10" checked/>
-                  <label for="pick-up-led-address-1" >Ленина, 10</label>
-                  <input id="pick-up-led-address-2" type="radio" name="led-address" value="Сталина, 20" />
-                  <label for="pick-up-led-address-2">Сталина, 20</label>
-                  <input id="pick-up-led-address-3" type="radio" name="led-address" value="Хрущёва, 30" />
-                  <label for="pick-up-led-address-3">Хрущёва, 30</label>
-                  <input id="pick-up-led-address-4" type="radio" name="led-address" value="Брежнева, 40" />
-                  <label for="pick-up-led-address-4">Брежнева, 40</label>
-                  <input id="pick-up-led-address-5" type="radio" name="led-address" value="Андропова, 50" />
-                  <label for="pick-up-led-address-5">Андропова, 50</label> -->
-                </div>                
+                <div id="pickupAdresses" class="input-wrapper input-wrapper--radio-group"></div>                
                 <div id="map" style="width: 768px; height:400px" ></div>
                 <h3>Способ оплаты</h3>
                 <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
