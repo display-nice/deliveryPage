@@ -277,7 +277,6 @@ function luhnAlgorythm(value) {
 //       pickPhoneField = document.querySelector('#pickup-phone-field #phone');
 phoneFields.forEach(field => {
     let form = field.parentElement;
-
     field.addEventListener('input', () => {
         validatePhone(form, field);
         phonePlus7(field);
@@ -289,9 +288,7 @@ phoneFields.forEach(field => {
 });
 
 function validatePhone(phoneForm, phoneField) {
-    let result = phoneField.value.match(/\+\d{11}\b/);
-    
-    
+    let result = phoneField.value.match(/\+\d{11}\b/);   
     
     if (result) {        
         phoneForm.classList.remove("input-wrapper--error");
@@ -514,9 +511,6 @@ function moveThumb(stepPx) {
 
 
 //----------------------------Вкл кнопку "заказать" и проверка заполненности полей ---------------------
-
-    
-   
 // let unfilled = ['Адрес', 'Дата доставки', 'Номер карты'];
 
 window.onload = function () {
@@ -527,7 +521,6 @@ window.onload = function () {
 delForm.oninput = function () {
     lookForUnfilled(delFields, delOrderBtn, delOrderHint);
 };
-
 
 pickForm.oninput = function() {
     lookForUnfilled(pickFields, pickOrderBtn, pickOrderHint);
@@ -598,8 +591,6 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
     // очищаем массив незаполненных
     unfilled = [];
 }
-    
-
 
 // function checkFieldsStatus() {
     //     if (deliveryButton.classList.contains("active")) {
@@ -641,15 +632,6 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
     
 // }
 
-// delAddress = document.querySelector('#delivery-address-field'),
-// delDate = document.querySelector('#delivery-date-field'),
-// delCard = document.querySelector('#delivery-input-card-number'),
-// delPhone = document.querySelector('#delivery-phone-field'),
-// pickCard = document.querySelector('#pickup-input-card-number'),
-// pickPhone = document.querySelector('#pickup-phone-field'),
-
-
-
 // Предыдущий вариант без чекпоинтов, с попиксельным сдвигом, вставлять внутрь маусмува
 // if (newLeft < 0) newLeft = 0;
 // rightEdge это ширина доступной ползунку зоны движения
@@ -668,6 +650,74 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
 // рабочие варианты как двигать ползунок:
 // thumb.style.transform = `translateX(${left + "px"})`;
 // thumb.style.left = left + 23 + 'px';
+
+//---------------------------Отправка заказа на сервер----------------------------------------------
+// const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
+// const phoneFields = document.querySelectorAll('#phone');
+
+// const delPhoneForm = document.querySelector('#delivery-phone-field'),
+//       delPhoneField = document.querySelector('#delivery-phone-field #phone'),
+//       pickPhoneForm = document.querySelector('#pickup-phone-field'),
+//       pickPhoneField = document.querySelector('#pickup-phone-field #phone');
+
+
+// const delForm = document.querySelector('#deliveryForm'),
+//         delFields = document.querySelectorAll('#delivery-address-field, #delivery-date-field, #delivery-input-card-number, #delivery-phone-field'),
+//         delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn'),
+//         delOrderHint = document.querySelector('#del-hint'),
+//         pickForm = document.querySelector('#pickupForm'),
+//         pickFields = document.querySelectorAll('#pickup-input-card-number, #pickup-phone-field'),
+//         pickOrderBtn = document.querySelector('#pickupForm .form__submit-btn'),
+//         pickOrderHint = document.querySelector('#pick-hint');
+pickOrderBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    sendData(pickFields, pickOrderBtn);
+});
+
+delOrderBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    sendData(delFields, delOrderBtn);
+});
+
+async function sendData(inputFields, orderBtn) {
+    orderBtn.disabled = true;
+    orderBtn.textContent = 'Отправка заказа...';
+    await fetch ('https://fake-json-shop-heroku.herokuapp.com/requests', {
+        method: 'POST',
+        body: JSON.stringify(getData(inputFields)),
+        headers: {
+            'Content-type': 'application/json'
+        }        
+    })
+    .then(response => response.json())
+    .then(json => console.log('ответ от сервера: ', json));
+    orderBtn.disabled = false;
+    orderBtn.textContent = 'Заказ принят!';
+}
+
+function getData(inputFields) {
+    let data = {};
+    for (let field of inputFields) {
+        // console.log('Начало цикла. Проверка ', fieldName);
+        if (field.style.display === 'none') {
+            // console.log('Поле скрыто. Запускаю проверку следующего поля.');
+            continue;
+        }
+
+        let fieldName = field.children[0].textContent;
+        
+        if (fieldName === 'Номер карты') {
+            let value = getCardNumber();
+            data[fieldName] = value;
+        } else {
+            let value = field.querySelector('input').value;
+            data[fieldName] = value;
+        }
+    }
+    // console.log(data);
+    return data;
+}
+
 
 
 // //---------------------------Самовывоз: Города и карта----------------------------------------------
