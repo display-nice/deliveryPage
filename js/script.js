@@ -581,7 +581,7 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
         if (field.style.display === 'none') {
             // console.log('Поле скрыто. Запускаю проверку следующего поля.');
             continue;
-        }
+        }        
         // ищем незаполненные поля, либо содержащие ошибку
         if (!field.classList.contains('input-wrapper--success')) {
             // console.log("Поле не зелёное. Устанавливаю status = false");
@@ -602,7 +602,20 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
             // console.log(`Найдено зелёное поле. fieldName = ${fieldName}`);
         }
     }
-    
+    if (pickupButton.classList.contains("active")) {
+        // let addresses = document.querySelectorAll('#pickupAdresses input');
+        let checked = document.querySelector('#pickupAdresses input:checked');
+        let fieldName = 'Адрес пункта выдачи заказов';
+        if (!checked) {
+            status = false;
+            // незаполненные поля добавляем в массив (если их ещё там нет)
+            if (!unfilled.includes(fieldName)) {unfilled.push(fieldName);}
+        }
+        if (checked) {
+            if (unfilled.includes(fieldName)) {unfilled.splice(unfilled.indexOf(fieldName), 1);}
+            if (unfilled.length === 0) {status = true;}
+        }     
+    }
     // в зависимости от статуса вкл\откл кнопка "ЗАКАЗАТЬ"
     if (status === true) {orderBtn.disabled = false;}
     if (status === false) {orderBtn.disabled = true;}
