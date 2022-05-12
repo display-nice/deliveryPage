@@ -1,5 +1,4 @@
 // глобальные переменные
-
 const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
 const phoneFields = document.querySelectorAll('#phone');
 
@@ -39,8 +38,7 @@ let now = new Date(),
     dateField = document.querySelector('[type="date"]');
 
 //---------------------------Выбор между самовывозом и доставкой-----------------------------
-( function() {    
-
+( function() {
     //трансфер номера телефона сделан не прямой, а через localStorage просто потому, что так захотелось.
     function transferPhoneValues() {
         phoneFields.forEach(field => {
@@ -108,12 +106,7 @@ let now = new Date(),
         deliveryButton.classList.remove('active');
         pickupButton.classList.add('active');
         document.querySelector('.tabs-block__pick-up').hidden = false;
-
-
-
         document.querySelector('.tabs-block__item-delivery').hidden = true;
-
-
         
         transferRadioButtons();
 
@@ -159,96 +152,96 @@ let now = new Date(),
 
 //---------------------------Самовывоз: Города и карта----------------------------------------------
 // ( function() {
-    let inputs = document.querySelectorAll('input');
-    let pickupCityNames = document.querySelectorAll('#pickup-cities input');    
-    let citiesObject;
-    let deliveryPoints;
-    let cityID;
-    let ledDeliveryPoints;
+let inputs = document.querySelectorAll('input');
+let pickupCityNames = document.querySelectorAll('#pickup-cities input');    
+let citiesObject;
+let deliveryPoints;
+let cityID;
+let ledDeliveryPoints;
 
-    // Показывает сразу все точки самовывоза на карте
-    let showPickupPointsOnMap = function() {    
-        let array = []; // создаём пустой массив для координат
-        deliveryPoints.forEach(object => { // записываем в него координаты всех точек доставки
-            array.push(object['coordinates']); // получается массив с массивами
-        });
-        // console.log(array);
-        DG.then(function() { // DG.then - специальный объект АПИ 2ГИС, все методы для карты работают ТОЛЬКО в нём
-            let allCityMarkers = DG.featureGroup(); // объявляем переменную для группы маркеров
-            allCityMarkers.removeFrom(map); // удаляем с карты все ранее созданные маркеры
-            array.forEach(coordinates => { // разбираем массив с координатами
-                DG.marker([coordinates[0], coordinates[1]]).addTo(allCityMarkers);
-            });
-            allCityMarkers.addTo(map); // добавляем все маркеры на карту
-            map.fitBounds(allCityMarkers.getBounds()); // умещаем все точки на карте сразу
-            map.zoomOut(1); // уменьшаем масштаб эквивалентно 1 нажатию кнопки "минус"
-        });
-    };
-
-    // Управляет передвижением карты по клику мыши на точку доставки
-    let moveToPoint = function() {
-        let pickupPointsButtons = document.querySelectorAll('#pickupAdresses input');
-        for (let i of pickupPointsButtons) { // навешиваем передвижение карты на каждую созданную кнопку с адресом
-            i.addEventListener('click', (event) => {                             
-                let coordinates = deliveryPoints.find(item => item.address == event.target.value).coordinates;
-                // console.log(coordinates);
-                DG.then(function() {
-                    map.panTo([coordinates[0], coordinates[1]]); // передвигает карту к конкретному адресу
-                    map.setZoomAround([coordinates[0], coordinates[1]], 15); // устанавливает зум размера 15 на конкретный адрес
-                });
-            }); 
-        }
-    };
-
-    // Создаёт кнопки с адресами по клику на город
-    let createPickupPoints = function (cityID) {
-        let pickupAdressesBlock = document.querySelector('#pickupAdresses');
-        pickupAdressesBlock.innerHTML = '<h4>Адрес пункта выдачи заказов</h4>';        
-        deliveryPoints = citiesObject.cities.find(item => item["city-id"] == cityID)["delivery-points"];        
-        // console.log(deliveryPoints);
-        for (let i = 0; i < deliveryPoints.length; ++i) {                   
-            pickupAdressesBlock.insertAdjacentHTML('beforeend', `
-            <input id="pick-up-led-address-${i+1}" type="radio" name="led-address" value="${deliveryPoints[i].address}"/>
-            <label for="pick-up-led-address-${i+1}" >${deliveryPoints[i].address}</label>
-            `);
-        }
-        showPickupPointsOnMap();
-        moveToPoint();  
-    };
-
-    // Отключаем все кнопки на время загрузки данных по городам
-    // Тут можно сделать что угодно: например, повесить сообщение для пользователя "Загрузка"
-    // Или покрасить кнопки в серый на время загрузки
-    inputs.forEach(input => {
-        input.disabled = true;
+// Показывает сразу все точки самовывоза на карте
+let showPickupPointsOnMap = function() {    
+    let array = []; // создаём пустой массив для координат
+    deliveryPoints.forEach(object => { // записываем в него координаты всех точек доставки
+        array.push(object['coordinates']); // получается массив с массивами
     });
-
-    // Фетч-запрос получает данные по городам и записывает их в глобальный citiesObject
-    let getCitiesData = async (url) => {
-        let citiesData = await fetch(url);
-        if (!citiesData.ok) { // этот иф отлавливает ошибки статуса по HTTP (т.к. сам фетч не считает их за ошибки)
-            throw new Error(`Не могу принести ${url}, статус: ${citiesData.status}`);
-        }    
-        citiesObject = await citiesData.json();
-        ledDeliveryPoints = citiesObject.cities.find(item => item["city-id"] == "led")["delivery-points"];
-        // console.log(ledDeliveryPoints); 
-        // включаем все кнопки после загрузки данных по городам
-        inputs.forEach(input => {
-            input.disabled = false;
+    // console.log(array);
+    DG.then(function() { // DG.then - специальный объект АПИ 2ГИС, все методы для карты работают ТОЛЬКО в нём
+        let allCityMarkers = DG.featureGroup(); // объявляем переменную для группы маркеров
+        allCityMarkers.removeFrom(map); // удаляем с карты все ранее созданные маркеры
+        array.forEach(coordinates => { // разбираем массив с координатами
+            DG.marker([coordinates[0], coordinates[1]]).addTo(allCityMarkers);
         });
-        // console.log(citiesObject);
-        document.querySelector('#pick-up-led').click(); // имитируем клик по Питеру, чтобы он встал по-умолчанию
-    };
-    getCitiesData('https://fake-json-shop-heroku.herokuapp.com/db');
+        allCityMarkers.addTo(map); // добавляем все маркеры на карту
+        map.fitBounds(allCityMarkers.getBounds()); // умещаем все точки на карте сразу
+        map.zoomOut(1); // уменьшаем масштаб эквивалентно 1 нажатию кнопки "минус"
+    });
+};
 
-    // получаем айдишник города по клику на город и передаём его дальше
-    pickupCityNames.forEach(city => {
-        city.addEventListener('click', (event) => {
-            cityID = event.target.value;
-            // console.log(cityID);
-            createPickupPoints(cityID);
-        });
-    });    
+// Управляет передвижением карты по клику мыши на точку доставки
+let moveToPoint = function() {
+    let pickupPointsButtons = document.querySelectorAll('#pickupAdresses input');
+    for (let i of pickupPointsButtons) { // навешиваем передвижение карты на каждую созданную кнопку с адресом
+        i.addEventListener('click', (event) => {                             
+            let coordinates = deliveryPoints.find(item => item.address == event.target.value).coordinates;
+            // console.log(coordinates);
+            DG.then(function() {
+                map.panTo([coordinates[0], coordinates[1]]); // передвигает карту к конкретному адресу
+                map.setZoomAround([coordinates[0], coordinates[1]], 15); // устанавливает зум размера 15 на конкретный адрес
+            });
+        }); 
+    }
+};
+
+// Создаёт кнопки с адресами по клику на город
+let createPickupPoints = function (cityID) {
+    let pickupAdressesBlock = document.querySelector('#pickupAdresses');
+    pickupAdressesBlock.innerHTML = '<h4>Адрес пункта выдачи заказов</h4>';        
+    deliveryPoints = citiesObject.cities.find(item => item["city-id"] == cityID)["delivery-points"];        
+    // console.log(deliveryPoints);
+    for (let i = 0; i < deliveryPoints.length; ++i) {                   
+        pickupAdressesBlock.insertAdjacentHTML('beforeend', `
+        <input id="pick-up-led-address-${i+1}" type="radio" name="led-address" value="${deliveryPoints[i].address}"/>
+        <label for="pick-up-led-address-${i+1}" >${deliveryPoints[i].address}</label>
+        `);
+    }
+    showPickupPointsOnMap();
+    moveToPoint();  
+};
+
+// Отключаем все кнопки на время загрузки данных по городам
+// Тут можно сделать что угодно: например, повесить сообщение для пользователя "Загрузка"
+// Или покрасить кнопки в серый на время загрузки
+inputs.forEach(input => {
+    input.disabled = true;
+});
+
+// Фетч-запрос получает данные по городам и записывает их в глобальный citiesObject
+let getCitiesData = async (url) => {
+    let citiesData = await fetch(url);
+    if (!citiesData.ok) { // этот иф отлавливает ошибки статуса по HTTP (т.к. сам фетч не считает их за ошибки)
+        throw new Error(`Не могу принести ${url}, статус: ${citiesData.status}`);
+    }    
+    citiesObject = await citiesData.json();
+    ledDeliveryPoints = citiesObject.cities.find(item => item["city-id"] == "led")["delivery-points"];
+    // console.log(ledDeliveryPoints); 
+    // включаем все кнопки после загрузки данных по городам
+    inputs.forEach(input => {
+        input.disabled = false;
+    });
+    // console.log(citiesObject);
+    document.querySelector('#pick-up-led').click(); // имитируем клик по Питеру, чтобы он встал по-умолчанию
+};
+getCitiesData('https://fake-json-shop-heroku.herokuapp.com/db');
+
+// получаем айдишник города по клику на город и передаём его дальше
+pickupCityNames.forEach(city => {
+    city.addEventListener('click', (event) => {
+        cityID = event.target.value;
+        // console.log(cityID);
+        createPickupPoints(cityID);
+    });
+});    
 // }() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Переключение типа оплаты----------------------------------------------
@@ -269,6 +262,7 @@ pickupCardButton.onclick = payPickupWithCard;
 pickupCashButton.onclick = payPickupWithCash;
 deliveryCardButton.onclick = payDeliveryWithCard;
 deliveryCashButton.onclick = payDeliveryWithCash;
+
 //---------------------------Номер банковской карты ----------------------------------------------
 // главный узел обработки номера карты, запускает всё
 function activateCardFields() {
@@ -340,18 +334,13 @@ function validateCardNumber(cardNumber) {
         cardNumberDiv.classList.add("input-wrapper--error");
         cardNumberDiv.classList.remove("input-wrapper--success");
     } else {
-        if (!luhnAlgorythm(cardNumber)){
-            // console.log(`Номер не валиден.`);
-            
+        if (!luhnAlgorythm(cardNumber)){           
             cardNumberDiv.classList.remove("input-wrapper--success");
             cardNumberDiv.classList.add("input-wrapper--error");
         }
-        if (luhnAlgorythm(cardNumber)) {
-            // console.log(`Проверка пройдена`);
-            
+        if (luhnAlgorythm(cardNumber)) {        
             cardNumberDiv.classList.remove("input-wrapper--error");
-            cardNumberDiv.classList.add("input-wrapper--success");
-            
+            cardNumberDiv.classList.add("input-wrapper--success");            
         } 
     }
 }
@@ -364,8 +353,7 @@ function luhnAlgorythm(value) {
     // accept only digits, dashes or spaces
         if (/[^0-9-\s]+/.test(value)) {
             return false;
-        }
-        
+        }        
         // The Luhn Algorithm. It so pretty.
         var nCheck = 0, nDigit = 0, bEven = false;
         value = value.replace(/\D/g, "");
@@ -387,13 +375,6 @@ function luhnAlgorythm(value) {
 }
 
 // --------------------------------- Номера телефонов ------------------------------------------
-// const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
-// const phoneFields = document.querySelectorAll('#phone');
-
-// const delPhoneForm = document.querySelector('#delivery-phone-field'),
-//       delPhoneField = document.querySelector('#delivery-phone-field #phone'),
-//       pickPhoneForm = document.querySelector('#pickup-phone-field'),
-//       pickPhoneField = document.querySelector('#pickup-phone-field #phone');
 phoneFields.forEach(field => {
     let form = field.parentElement;
     field.addEventListener('input', () => {
@@ -488,7 +469,6 @@ function validateDeliveryAdress(deliveryAdress) {
 }
 // обработчик событий на ввод
 deliveryAdressField.addEventListener('input', (e) => {
-    // let deliveryAdress = deliveryAdressField.value;
     validateDeliveryAdress(deliveryAdressField.value);
 });
 
@@ -571,7 +551,6 @@ function moveThumb(stepPx) {
 }
 
 //----------------------------Вкл кнопку "заказать" и проверка заполненности полей ---------------------
-
 window.onload = function () {
     lookForUnfilled(delFields, delOrderBtn, delOrderHint);
     lookForUnfilled(pickFields, pickOrderBtn, pickOrderHint);
@@ -684,27 +663,6 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
 // thumb.style.left = left + 23 + 'px';
 
 //---------------------------Отправка заказа на сервер----------------------------------------------
-// const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
-// const phoneFields = document.querySelectorAll('#phone');
-
-// const delPhoneForm = document.querySelector('#delivery-phone-field'),
-//       delPhoneField = document.querySelector('#delivery-phone-field #phone'),
-//       pickPhoneForm = document.querySelector('#pickup-phone-field'),
-//       pickPhoneField = document.querySelector('#pickup-phone-field #phone');
-
-
-// const delForm = document.querySelector('#deliveryForm'),
-//         delFields = document.querySelectorAll('#delivery-address-field, #delivery-date-field, #delivery-input-card-number, #delivery-phone-field'),
-//         delOrderBtn = document.querySelector('#deliveryForm .form__submit-btn'),
-//         delOrderHint = document.querySelector('#del-hint'),
-//         pickForm = document.querySelector('#pickupForm'),
-//         pickFields = document.querySelectorAll('#pickup-input-card-number, #pickup-phone-field'),
-//         pickOrderBtn = document.querySelector('#pickupForm .form__submit-btn'),
-//         pickOrderHint = document.querySelector('#pick-hint');
-
-// pickupCardNumberDiv = document.querySelector('#pickup-input-card-number'),    
-// deliveryCardNumberDiv = document.querySelector('#delivery-input-card-number');        
-
 const pickupAllFieldsWithData = 
       document.querySelectorAll
       ('#pickup-cities, #pickupAdresses, #pickup-payment, #pickup-input-card-number, #pickup-phone-field'),
@@ -779,8 +737,6 @@ function getAndResetData(inputFields, hintArea) {
                 if (pickupButton.classList.contains("active")) {
                     let x = document.querySelector('#pickup-input-card-number');
                     x.style.cssText = "display: flex";
-                    // x.classList.remove("input-wrapper--success");
-                    // x.classList.remove("input-wrapper--error");
                 } else {
                     document.querySelector('#delivery-input-card-number').style.cssText = "display: flex";
                 }
@@ -804,9 +760,3 @@ function getAndResetData(inputFields, hintArea) {
     console.log(data);
     return data;
 }
-
-
-
-
-
-
