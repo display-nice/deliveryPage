@@ -66,13 +66,15 @@
                 </div>
                 <div id="pickupAdresses" class="input-wrapper input-wrapper--radio-group"></div>                
                 <div id="map" style="width: 768px; height:400px" ></div>
-                <h3>Способ оплаты</h3>
-                <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
-                  <input id="pickup-payment-card" type="radio" name="pickup-payment-method" value="card" checked />
-                  <label for="pickup-payment-card">Карта</label>
-                  <input id="pickup-payment-cash" type="radio" name="pickup-payment-method" value="cash" />
-                  <label for="pickup-payment-cash">Наличные</label>
-                </div>
+                <div id="pickup-payment">
+                  <h3>Способ оплаты</h3>
+                  <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
+                    <input id="pickup-payment-card" type="radio" name="pickup-payment-method" value="card" checked />
+                    <label for="pickup-payment-card">Карта</label>
+                    <input id="pickup-payment-cash" type="radio" name="pickup-payment-method" value="cash" />
+                    <label for="pickup-payment-cash">Наличные</label>
+                  </div>
+                </di>
                 <div id="pickup-input-card-number" class="input-wrapper input-wrapper--input-group">
                   <h4>Номер карты</h4>
                   <input id="card-fields-1" type="text" maxlength="4" required />
@@ -133,7 +135,7 @@
                   <label for="delivery-user-date-delivery" aria-label="Укажите дату доставки"></label>
                   <div class="input-wrapper__error">Укажите дату доставки (не ранее, чем завтра и не позднее, чем через 7 дней)</div>
                 </div>
-                <div class="input-wrapper input-wrapper--range">
+                <div id="delivery-time" class="input-wrapper input-wrapper--range">
                   <h4>Время доставки</h4>
                   <input id="delivery-user-time-delivery" type="range" class="hidden" data-field-type="delivery" />
                   <label for="delivery-user-time-delivery" aria-label="Укажите время доставки"></label>
@@ -156,13 +158,15 @@
                     </div>
                   </div>
                 </div>
-                <h3>Способ оплаты</h3>
-                <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
-                  <input id="delivery-payment-card" type="radio" name="delivery-payment-method" value="card" checked/>
-                  <label for="delivery-payment-card">Карта</label>
-                  <input id="delivery-payment-cash" type="radio" name="delivery-payment-method" value="cash"  />
-                  <label for="delivery-payment-cash">Наличные</label>
-                </div>
+                <div id="delivery-payment">
+                  <h3>Способ оплаты</h3>
+                  <div class="input-wrapper input-wrapper--radio-group input-wrapper--payment-method">
+                    <input id="delivery-payment-card" type="radio" name="delivery-payment-method" value="card" checked/>
+                    <label for="delivery-payment-card">Карта</label>
+                    <input id="delivery-payment-cash" type="radio" name="delivery-payment-method" value="cash"  />
+                    <label for="delivery-payment-cash">Наличные</label>
+                  </div>
+                </di>
                 <div id="delivery-input-card-number" class="input-wrapper input-wrapper--input-group">
                   <h4>Номер карты</h4>
                   <input id="deliver-crd-1" type="text" required />

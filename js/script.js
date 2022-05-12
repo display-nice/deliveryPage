@@ -129,7 +129,7 @@ let now = new Date(),
 }() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Самовывоз: Города и карта----------------------------------------------
-( function() {
+// ( function() {
     let inputs = document.querySelectorAll('input');
     let pickupCityNames = document.querySelectorAll('#pickup-cities input');    
     let citiesObject;
@@ -220,7 +220,7 @@ let now = new Date(),
             createPickupPoints(cityID);
         });
     });    
-}() ); // самовызывающаяся анонимная ф-я
+// }() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Переключение типа оплаты----------------------------------------------
 ( function() {
@@ -306,6 +306,13 @@ function getCardNumber() {
         cardNumber += field.value; 
     });
     return cardNumber;
+}
+// очищает номер карты, используется после нажатия кнопки "заказать"
+function clearCardNumber(field) {
+    let cardFields = field.querySelectorAll('input');
+    cardFields.forEach(cardField => {
+        cardField.value = '';
+    });
 }
 
 //проверка номера карты, внутри запускает функцию с алгоритмом Луна
@@ -661,52 +668,107 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
 //         pickFields = document.querySelectorAll('#pickup-input-card-number, #pickup-phone-field'),
 //         pickOrderBtn = document.querySelector('#pickupForm .form__submit-btn'),
 //         pickOrderHint = document.querySelector('#pick-hint');
+
+// pickupCardNumberDiv = document.querySelector('#pickup-input-card-number'),    
+// deliveryCardNumberDiv = document.querySelector('#delivery-input-card-number');        
+
+const pickupAllFieldsWithData = 
+      document.querySelectorAll
+      ('#pickup-cities, #pickupAdresses, #pickup-payment, #pickup-input-card-number, #pickup-phone-field'),
+      deliveryAllFieldsWithData = 
+      document.querySelectorAll
+      ('#delivery-cities, #delivery-address-field, #delivery-date-field, #delivery-time, #delivery-payment, #delivery-input-card-number, #delivery-phone-field');
+
+
 pickOrderBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    sendData(pickFields, pickOrderBtn);
+    // getAndResetData(pickupAllFieldsWithData, pickOrderHint);
+    sendData(pickupAllFieldsWithData, pickOrderBtn, pickOrderHint);
 });
 
 delOrderBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    sendData(delFields, delOrderBtn);
+    // getAndResetData(deliveryAllFieldsWithData, delOrderHint);
+    sendData(deliveryAllFieldsWithData, delOrderBtn, delOrderHint);
 });
 
-async function sendData(inputFields, orderBtn) {
+async function sendData(inputFields, orderBtn, hintArea) {
     orderBtn.disabled = true;
     orderBtn.textContent = 'Отправка заказа...';
     await fetch ('https://fake-json-shop-heroku.herokuapp.com/requests', {
         method: 'POST',
-        body: JSON.stringify(getData(inputFields)),
+        body: JSON.stringify(getAndResetData(inputFields, hintArea)),
         headers: {
             'Content-type': 'application/json'
         }        
     })
     .then(response => response.json())
     .then(json => console.log('ответ от сервера: ', json));
+    orderBtn.textContent = 'Заказать';
     orderBtn.disabled = false;
-    orderBtn.textContent = 'Заказ принят!';
 }
 
-function getData(inputFields) {
+function getAndResetData(inputFields, hintArea) {
     let data = {};
     for (let field of inputFields) {
-        // console.log('Начало цикла. Проверка ', fieldName);
         if (field.style.display === 'none') {
             // console.log('Поле скрыто. Запускаю проверку следующего поля.');
             continue;
         }
-
-        let fieldName = field.children[0].textContent;
         
-        if (fieldName === 'Номер карты') {
-            let value = getCardNumber();
-            data[fieldName] = value;
-        } else {
-            let value = field.querySelector('input').value;
-            data[fieldName] = value;
+        let fieldName = field.children[0].textContent;
+        // console.log('Начало цикла. Проверка ', fieldName);
+        switch(fieldName) {
+            case 'Город': 
+                data[fieldName] = field.querySelector('input[name="city"]:checked').value;
+                // field.querySelector('input[name="city"]:checked').checked = false;
+                field.querySelector('input:first-of-type').checked = true;
+                break;
+            case 'Адрес пункта выдачи заказов': 
+                data[fieldName] = field.querySelector('input[name="led-address"]:checked').value;
+                field.querySelector('input[name="led-address"]:checked').checked = false;
+                createPickupPoints('led');
+                break;
+            case 'Номер карты': 
+                data[fieldName] = getCardNumber();
+                clearCardNumber(field);
+                break;
+            case 'Время доставки':
+                data[fieldName] = delTime;
+                moveThumb(0);
+                delTime = '10:00 - 12:00';
+                thumbTooltip.textContent = '10:00 - 12:00';
+                break;
+            case 'Способ оплаты':
+                data[fieldName] = field.querySelector('div input:checked').value;
+                // сброс значения
+                field.querySelector('input:first-of-type').checked = true;
+                if (pickupButton.classList.contains("active")) {
+                    let x = document.querySelector('#pickup-input-card-number');
+                    x.style.cssText = "display: flex";
+                    // x.classList.remove("input-wrapper--success");
+                    // x.classList.remove("input-wrapper--error");
+                } else {
+                    document.querySelector('#delivery-input-card-number').style.cssText = "display: flex";
+                }
+                break;
+            case 'Адрес':
+            case 'Дата доставки':
+            case 'Номер телефона':
+                data[fieldName] = field.querySelector('input').value;
+                field.querySelector('input').value = '';
+                break;
         }
     }
-    // console.log(data);
+
+    for (let field of inputFields) {
+        field.classList.remove("input-wrapper--success");
+        field.classList.remove("input-wrapper--error");
+    }
+    localStorage.removeItem('phone');
+    hintArea.textContent = "Заказ отправлен! Ожидайте звонка оператора.";
+
+    console.log(data);
     return data;
 }
 
