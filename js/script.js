@@ -1,4 +1,5 @@
 // глобальные переменные
+
 const phoneForms = document.querySelectorAll('#pickup-phone-field, #delivery-phone-field');
 const phoneFields = document.querySelectorAll('#phone');
 
@@ -84,7 +85,12 @@ let now = new Date(),
         deliveryButton.classList.remove('active');
         pickupButton.classList.add('active');
         document.querySelector('.tabs-block__pick-up').hidden = false;
+
+
+
         document.querySelector('.tabs-block__item-delivery').hidden = true;
+
+
         
         transferRadioButtons();
 
@@ -476,7 +482,6 @@ deliveryAdressField.addEventListener('input', (e) => {
 //--------------------------------Доставка: ползунок времени доставки---------------------
 let thumb = document.querySelector('.js_range-slider-thumb');
 let area = document.querySelector('.js_range-slider-thumb-area');
-let leftEdge = document.querySelector('.js_range-slider-thumb-area').getBoundingClientRect().left;
 const thumbTooltip = document.querySelector('.range-slider-tooltip');
 // всего шагов будет 21, так как шаг по бизнес-условиям у нас равен 20 минутам,
 // в часе три шага, в диапазоне времени доставки семь часов. 3*7=21.
@@ -491,7 +496,8 @@ let delTime = '10:00 - 12:00';
 thumb.onmousedown = function (e) {
     thumb.ondragstart = function() {
         return false;
-    };    
+    };
+    let leftEdge = document.querySelector('.js_range-slider-thumb-area').getBoundingClientRect().left;
     let thumbLeft = thumb.getBoundingClientRect().left;
     // Переопределение StepPx сделал потому, что пользователь может изменить
     // масштаб страницы и тогда изменятся все пиксельные размеры, что грозит
@@ -500,6 +506,7 @@ thumb.onmousedown = function (e) {
     let shiftX = e.pageX - thumbLeft;
 
     document.onmousemove = function(e) {
+        // console.log(thumbLeft);
         // формула считает новое левое положение бегунка
         let newLeft = e.pageX - leftEdge - shiftX;
         // console.log(`newLeft = ${newLeft}`);
