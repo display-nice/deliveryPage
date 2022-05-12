@@ -19,6 +19,13 @@ const delForm = document.querySelector('#deliveryForm'),
         pickOrderHint = document.querySelector('#pick-hint');
 let unfilled = [];
 
+const pickupCardButton = document.querySelector('#pickup-payment-card'),
+      pickupCashButton = document.querySelector('#pickup-payment-cash'),
+      pickupCardNumberDiv = document.querySelector('#pickup-input-card-number'),    
+      deliveryCardButton = document.querySelector('#delivery-payment-card'),
+      deliveryCashButton = document.querySelector('#delivery-payment-cash'),
+      deliveryCardNumberDiv = document.querySelector('#delivery-input-card-number');    
+
 const pickupButton = document.querySelector('.tab[data-tab="pickup"]'),
       deliveryButton = document.querySelector('.tab[data-tab="delivery"]');
 
@@ -71,11 +78,27 @@ let now = new Date(),
             let paymentMethod = document.querySelector('input[name="pickup-payment-method"]:checked').value;            
             // console.log(`В самовывозе был выбран метод оплаты ${paymentMethod}`);
             document.querySelector(`#deliveryForm input[value='${paymentMethod}']`).checked = true;
+            switch (paymentMethod) {
+                case 'cash':
+                    payDeliveryWithCash();
+                    break;
+                case 'card':
+                    payDeliveryWithCard();
+                    break;
+            }
         }
         if (!deliveryButton.classList.contains("active")) {
             let paymentMethod = document.querySelector('input[name="delivery-payment-method"]:checked').value;
             // console.log(`В доставке был выбран метод оплаты ${paymentMethod}`);
             document.querySelector(`#pickupForm input[value='${paymentMethod}']`).checked = true;
+            switch (paymentMethod) {
+                case 'cash':
+                    payPickupWithCash();
+                    break;
+                case 'card':
+                    payPickupWithCard();
+                    break;
+            }
         }
     }
 
@@ -229,33 +252,23 @@ let now = new Date(),
 // }() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Переключение типа оплаты----------------------------------------------
-( function() {
-    const pickupCardButton = document.querySelector('#pickup-payment-card'),
-    pickupCashButton = document.querySelector('#pickup-payment-cash'),
-    pickupCardNumberDiv = document.querySelector('#pickup-input-card-number'),    
-    deliveryCardButton = document.querySelector('#delivery-payment-card'),
-    deliveryCashButton = document.querySelector('#delivery-payment-cash'),
-    deliveryCardNumberDiv = document.querySelector('#delivery-input-card-number');        
-        
-    let payPickupWithCash = function() {        
-        pickupCardNumberDiv.style.cssText = "display: none";
-    };
-    let payPickupWithCard = function() {
-        pickupCardNumberDiv.style.cssText = "display: flex";
-    };
-    let payDeliveryWithCash = function() {        
-        deliveryCardNumberDiv.style.cssText = "display: none";
-    };
-    let payDeliveryWithCard = function() {
-        deliveryCardNumberDiv.style.cssText = "display: flex";
-    };
-    
-    pickupCardButton.onclick = payPickupWithCard;
-    pickupCashButton.onclick = payPickupWithCash;
-    deliveryCardButton.onclick = payDeliveryWithCard;
-    deliveryCashButton.onclick = payDeliveryWithCash;
-}() );
+function payPickupWithCash() {        
+    pickupCardNumberDiv.style.cssText = "display: none";
+}
+function payPickupWithCard() {
+    pickupCardNumberDiv.style.cssText = "display: flex";
+}
+function payDeliveryWithCash() {        
+    deliveryCardNumberDiv.style.cssText = "display: none";
+}
+function payDeliveryWithCard() {
+    deliveryCardNumberDiv.style.cssText = "display: flex";
+}
 
+pickupCardButton.onclick = payPickupWithCard;
+pickupCashButton.onclick = payPickupWithCash;
+deliveryCardButton.onclick = payDeliveryWithCard;
+deliveryCashButton.onclick = payDeliveryWithCash;
 //---------------------------Номер банковской карты ----------------------------------------------
 // главный узел обработки номера карты, запускает всё
 function activateCardFields() {
