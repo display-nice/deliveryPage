@@ -143,15 +143,12 @@ let now = new Date(),
         validateDate();
         lookForUnfilled(delFields, delOrderBtn, delOrderHint);
     }
-    // showDeliveryFunctional();
     showPickupFunctional(); // функционал самовывоза включён по-умолчанию
     pickupButton.onclick = showPickupFunctional; // вкл. функционал самовывоза
-    // pickupButton.onclick = transferRadioButtons;
     deliveryButton.onclick = showDeliveryFunctional; // вкл. функционал доставки
 }() ); // самовызывающаяся анонимная ф-я
 
 //---------------------------Самовывоз: Города и карта----------------------------------------------
-// ( function() {
 let inputs = document.querySelectorAll('input');
 let pickupCityNames = document.querySelectorAll('#pickup-cities input');    
 let citiesObject;
@@ -499,10 +496,8 @@ thumb.onmousedown = function (e) {
     let shiftX = e.pageX - thumbLeft;
 
     document.onmousemove = function(e) {
-        // console.log(thumbLeft);
         // формула считает новое левое положение бегунка
         let newLeft = e.pageX - leftEdge - shiftX;
-        // console.log(`newLeft = ${newLeft}`);
         // если новое положение бегунка преодолело барьер шага,
         // значит номер шага надо изменить на новый 
         if ( Math.floor(newLeft / stepPx) !== step ) {
@@ -584,18 +579,13 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
         }
         // если же поле позеленело, то ...
         else if (field.classList.contains('input-wrapper--success')) {
-            // console.log("Поле зелёное! Проверяю unfilled...");
             // ...удаляем из массива незаполненных имя того поля
             if (unfilled.includes(fieldName)) {unfilled.splice(unfilled.indexOf(fieldName), 1);}
             // ...и проверяем, осталось ли в массиве хоть что-то. если массив пустой, status = true.
-            // console.log(`Длина unfilled сейчас ${unfilled.length}`);
             if (unfilled.length === 0) {status = true;}
-            // console.log(`unfilled = ${unfilled}, status = ${status}`);
-            // console.log(`Найдено зелёное поле. fieldName = ${fieldName}`);
         }
     }
     if (pickupButton.classList.contains("active")) {
-        // let addresses = document.querySelectorAll('#pickupAdresses input');
         let checked = document.querySelector('#pickupAdresses input:checked');
         let fieldName = 'Адрес пункта выдачи заказов';
         if (!checked) {
@@ -611,8 +601,6 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
     // в зависимости от статуса вкл\откл кнопка "ЗАКАЗАТЬ"
     if (status === true) {orderBtn.disabled = false;}
     if (status === false) {orderBtn.disabled = true;}
-    // console.log('Весь цикл завершён. status теперь', status);
-    // console.log('-------------------------------------------------------------');
 
     // ОБРАБОТКА МАССИВА НЕЗАПОЛНЕННЫХ ПОЛЕЙ
     // оборачиваем каждый элемент массива в спан
@@ -643,25 +631,6 @@ function lookForUnfilled(inputFields, orderBtn, orderHint) {
     unfilled = [];
 }
 
-// Предыдущий вариант без чекпоинтов, с попиксельным сдвигом, вставлять внутрь маусмува
-// if (newLeft < 0) newLeft = 0;
-// rightEdge это ширина доступной ползунку зоны движения
-// if (newLeft > rightEdge) newLeft = rightEdge;        
-// thumb.style.left = newLeft + 'px';
-
-// function handleMouseClick(event) {
-//     console.log('Вы нажали на элемент:', event.target);
-// }  
-//   // Добавляем обработчик события
-//   window.addEventListener('click', handleMouseClick);
-  
-  // Убираем обработчик события
-//   window.removeEventListener('click', handleMouseClick);
-
-// рабочие варианты как двигать ползунок:
-// thumb.style.transform = `translateX(${left + "px"})`;
-// thumb.style.left = left + 23 + 'px';
-
 //---------------------------Отправка заказа на сервер----------------------------------------------
 const pickupAllFieldsWithData = 
       document.querySelectorAll
@@ -670,16 +639,13 @@ const pickupAllFieldsWithData =
       document.querySelectorAll
       ('#delivery-cities, #delivery-address-field, #delivery-date-field, #delivery-time, #delivery-payment, #delivery-input-card-number, #delivery-phone-field');
 
-
 pickOrderBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    // getAndResetData(pickupAllFieldsWithData, pickOrderHint);
     sendData(pickupAllFieldsWithData, pickOrderBtn, pickOrderHint);
 });
 
 delOrderBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    // getAndResetData(deliveryAllFieldsWithData, delOrderHint);
     sendData(deliveryAllFieldsWithData, delOrderBtn, delOrderHint);
 });
 
@@ -703,16 +669,13 @@ function getAndResetData(inputFields, hintArea) {
     let data = {};
     for (let field of inputFields) {
         if (field.style.display === 'none') {
-            // console.log('Поле скрыто. Запускаю проверку следующего поля.');
             continue;
         }
         
         let fieldName = field.children[0].textContent;
-        // console.log('Начало цикла. Проверка ', fieldName);
         switch(fieldName) {
             case 'Город': 
                 data[fieldName] = field.querySelector('input[name="city"]:checked').value;
-                // field.querySelector('input[name="city"]:checked').checked = false;
                 field.querySelector('input:first-of-type').checked = true;
                 break;
             case 'Адрес пункта выдачи заказов': 
@@ -760,3 +723,22 @@ function getAndResetData(inputFields, hintArea) {
     console.log(data);
     return data;
 }
+
+//-----------------------hint-----------------------------
+const hintBtn = document.querySelector('#hint__btn');
+const hintDesc = document.querySelector('#hint__description');
+const crossPointer = document.querySelector('#hint__pointer-close');
+const hintPointer = document.querySelector('#hint__pointer');
+const hintWrapper = document.querySelector('#hint__wrapper');
+
+function hideHintPointer () {
+	hintPointer.classList.add('hint__pointer--hidden');
+};
+function openHintInfo () {
+	hintPointer.classList.add('hint__pointer--hidden');
+	hintWrapper.style.alignItems = "flex-start";
+	hintDesc.classList.toggle('hint__description--active');
+}
+
+hintBtn.onclick = openHintInfo;
+crossPointer.onclick = hideHintPointer;

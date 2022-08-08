@@ -15,3 +15,5 @@
 @import url("./blocks/map.css");
 @import url("./blocks/input-wrapper.css");
 @import url('./blocks/range-slider.css');
+
+@import url("./blocks/hint.css");

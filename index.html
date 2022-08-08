@@ -19,11 +19,46 @@
               center: [59.848325, 30.256839],
               zoom: 11
           });
-          // DG.marker([59.848325, 30.256839]).addTo(map); // это можно не включать
+          // DG.marker([59.848325, 30.256839]).addTo(map); // установит начальный маркер по кординатам. это можно не включать
       });
     </script>
   </head>
   <body>
+    <aside class="hint">
+      <div id="hint__wrapper" class="hint__wrapper">
+        <button id="hint__btn" class="hint__btn">
+          <svg class="hint__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+            class="bi bi-info-square" viewBox="0 0 16 16">
+            <path
+              d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+            <path
+              d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+          </svg>
+        </button>
+        <div id="hint__description" class="hint__description ">
+          <h2 class="hint__header">Особенности проекта</h2>
+          <ul class="hint__list">
+            <li class="hint__item">Кроссбраузерная вёрстка под ПК</li>
+            <li class="hint__item">CSS: модульная структура, переменные, БЭМ, Flexbox</li>
+            <li class="hint__item">Javascript ES6 без фреймворков и библиотек</li>
+            <li class="hint__item">Карта и точки на API 2GIS. Выбранный адрес отображается на карте</li>
+            <li class="hint__item">Адреса точек в городе приходят с сервера в JSON через Fetch-запрос</li>
+            <li class="hint__item">Различные способы валидации: html, регулярные выражения, алгоритм Луна для номера карты</li>
+            <li class="hint__item">Номер карты: при заполнении одного поля фокус перемещается в следующее</li>
+            <li class="hint__item">При переключении "доставка\самовывоз" в форме сохраняются данные для каждого режима</li>
+            <li class="hint__item">Собранные данные упаковываются в JSON и уходят на сервер через Fetch (POST-запрос)</li>
+          </ul>
+        </div>
+        <div id="hint__pointer" class="hint__pointer ">
+          <div class="hint__pointer-text">
+            &#9668; Узнать подробнее об этом проекте
+          </div>
+          <div id="hint__pointer-close" class="hint__pointer-close">
+            &#10008;
+          </div>
+        </div>
+      </div>
+    </aside>
     <div class="page-header"></div>
     <div class="wrapper">
       <main class="page-main">
